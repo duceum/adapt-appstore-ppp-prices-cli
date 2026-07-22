@@ -1,0 +1,176 @@
+country_code,country_name,gdp_per_capita,category,default_coefficient
+LUX,Luxembourg,146818,premium,1.10
+IRL,Ireland,129132,premium,1.10
+BMU,Bermuda,125842,premium,1.10
+CHE,Switzerland,111047,premium,1.10
+ISL,Iceland,98150,premium,1.10
+CYM,Cayman Islands,97583,premium,1.10
+SGP,Singapore,94481,premium,1.10
+NOR,Norway,91884,premium,1.10
+USA,United States,89599,usa,1.00
+DNK,Denmark,76581,high_income,0.85
+MAC,Macau,74921,high_income,0.85
+NLD,Netherlands,73174,high_income,0.85
+QAT,Qatar,71441,high_income,0.85
+AUS,Australia,65946,high_income,0.85
+SWE,Sweden,62036,high_income,0.85
+AUT,Austria,61694,high_income,0.85
+BEL,Belgium,60418,high_income,0.85
+ISR,Israel,60009,high_income,0.85
+DEU,Germany,59925,high_income,0.85
+HKG,Hong Kong,56844,high_income,0.85
+GBR,United Kingdom,56661,high_income,0.85
+FIN,Finland,56084,high_income,0.85
+CAN,Canada,54935,high_income,0.85
+ARE,United Arab Emirates,51348,high_income,0.85
+NZL,New Zealand,49383,upper_middle,0.675
+MLT,Malta,49277,upper_middle,0.675
+FRA,France,48982,upper_middle,0.675
+ITA,Italy,43161,upper_middle,0.675
+CYP,Cyprus,42413,upper_middle,0.675
+BHS,Bahamas,39726,upper_middle,0.675
+ESP,Spain,38040,upper_middle,0.675
+TWN,Taiwan,37827,upper_middle,0.675
+SVN,Slovenia,37178,upper_middle,0.675
+KOR,South Korea,35962,upper_middle,0.675
+SAU,Saudi Arabia,35231,upper_middle,0.675
+CZE,Czechia,35161,upper_middle,0.675
+JPN,Japan,34713,upper_middle,0.675
+VGB,British Virgin Islands,34200,upper_middle,0.675
+EST,Estonia,34041,upper_middle,0.675
+MSR,Montserrat,34000,upper_middle,0.675
+BRN,Brunei,33858,upper_middle,0.675
+LTU,Lithuania,32982,upper_middle,0.675
+PRT,Portugal,31415,upper_middle,0.675
+GUY,Guyana,31378,upper_middle,0.675
+KWT,Kuwait,30805,upper_middle,0.675
+TCA,Turks and Caicos Islands,30349,upper_middle,0.675
+BHR,Bahrain,29253,upper_middle,0.675
+AIA,Anguilla,28850,upper_middle,0.675
+SVK,Slovakia,28524,upper_middle,0.675
+POL,Poland,28485,upper_middle,0.675
+GRC,Greece,27170,upper_middle,0.675
+HRV,Croatia,26958,upper_middle,0.675
+BRB,Barbados,25927,upper_middle,0.675
+HUN,Hungary,25916,upper_middle,0.675
+LVA,Latvia,25630,upper_middle,0.675
+URY,Uruguay,24380,lower_middle,0.50
+ROU,Romania,22436,lower_middle,0.50
+ATG,Antigua and Barbuda,22314,lower_middle,0.50
+KNA,Saint Kitts and Nevis,22158,lower_middle,0.50
+SYC,Seychelles,21956,lower_middle,0.50
+BGR,Bulgaria,20426,lower_middle,0.50
+PAN,Panama,19802,lower_middle,0.50
+PLW,Palau,19456,lower_middle,0.50
+OMN,Oman,19119,lower_middle,0.50
+CRI,Costa Rica,19104,lower_middle,0.50
+MDV,Maldives,18684,lower_middle,0.50
+TUR,Turkey,18198,lower_middle,0.50
+TTO,Trinidad and Tobago,18121,lower_middle,0.50
+RUS,Russia,17446,lower_middle,0.50
+CHL,Chile,17181,lower_middle,0.50
+SRB,Serbia,15322,lower_middle,0.50
+MNE,Montenegro,14986,lower_middle,0.50
+KAZ,Kazakhstan,14723,lower_middle,0.50
+LCA,Saint Lucia,14647,lower_middle,0.50
+ARG,Argentina,14359,lower_middle,0.50
+NRU,Nauru,14274,lower_middle,0.50
+MEX,Mexico,13967,lower_middle,0.50
+MYS,Malaysia,13901,lower_middle,0.50
+CHN,China,13806,lower_middle,0.50
+GRD,Grenada,12544,lower_middle,0.50
+MUS,Mauritius,12519,lower_middle,0.50
+DOM,Dominican Republic,11919,lower_middle,0.50
+VCT,Saint Vincent and the Grenadines,11132,lower_middle,0.50
+ALB,Albania,11108,lower_middle,0.50
+TKM,Turkmenistan,10801,lower_middle,0.50
+BRA,Brazil,10578,lower_middle,0.50
+MKD,North Macedonia,10378,lower_middle,0.50
+GEO,Georgia,10126,lower_middle,0.50
+DMA,Dominica,9944,emerging,0.40
+BIH,Bosnia and Herzegovina,9648,emerging,0.40
+BLR,Belarus,9435,emerging,0.40
+GAB,Gabon,9303,emerging,0.40
+PER,Peru,9256,emerging,0.40
+ARM,Armenia,8969,emerging,0.40
+JAM,Jamaica,8405,emerging,0.40
+COL,Colombia,8249,emerging,0.40
+MDA,Moldova,8239,emerging,0.40
+XKS,Kosovo,8033,emerging,0.40
+THA,Thailand,7942,emerging,0.40
+BLZ,Belize,7897,emerging,0.40
+AZE,Azerbaijan,7365,emerging,0.40
+ECU,Ecuador,7210,emerging,0.40
+MNG,Mongolia,7005,emerging,0.40
+BWA,Botswana,6943,emerging,0.40
+LBY,Libya,6866,emerging,0.40
+SUR,Suriname,6843,emerging,0.40
+FJI,Fiji,6825,emerging,0.40
+PRY,Paraguay,6799,emerging,0.40
+ZAF,South Africa,6667,emerging,0.40
+GTM,Guatemala,6478,emerging,0.40
+UKR,Ukraine,6382,emerging,0.40
+DZA,Algeria,6095,emerging,0.40
+TON,Tonga,5921,emerging,0.40
+IRQ,Iraq,5832,emerging,0.40
+SLV,El Salvador,5744,emerging,0.40
+CPV,Cape Verde,5671,emerging,0.40
+FSM,Micronesia,5241,emerging,0.40
+IDN,Indonesia,5074,emerging,0.40
+JOR,Jordan,4908,emerging,0.40
+NAM,Namibia,4816,emerging,0.40
+MAR,Morocco,4763,emerging,0.40
+LBN,Lebanon,4757,emerging,0.40
+TUN,Tunisia,4752,emerging,0.40
+VNM,Vietnam,4745,emerging,0.40
+BOL,Bolivia,4585,emerging,0.40
+SWZ,Eswatini,4410,emerging,0.40
+LKA,Sri Lanka,4325,emerging,0.40
+PHL,Philippines,4321,emerging,0.40
+BTN,Bhutan,4285,emerging,0.40
+STP,Sao Tome and Principe,4061,emerging,0.40
+UZB,Uzbekistan,3647,emerging,0.40
+HND,Honduras,3637,emerging,0.40
+GHA,Ghana,3193,emerging,0.40
+EGY,Egypt,3191,emerging,0.40
+VUT,Vanuatu,3133,emerging,0.40
+VEN,Venezuela,3103,emerging,0.40
+ZWE,Zimbabwe,3071,emerging,0.40
+CIV,Cote d'Ivoire,3016,emerging,0.40
+NIC,Nicaragua,2953,emerging,0.40
+AGO,Angola,2931,emerging,0.40
+IND,India,2818,emerging,0.40
+KHM,Cambodia,2812,emerging,0.40
+KGZ,Kyrgyzstan,2790,emerging,0.40
+MRT,Mauritania,2582,emerging,0.40
+PNG,Papua New Guinea,2555,emerging,0.40
+KEN,Kenya,2549,emerging,0.40
+COG,Republic of the Congo,2420,emerging,0.40
+SLB,Solomon Islands,2386,emerging,0.40
+LAO,Laos,2174,emerging,0.40
+CMR,Cameroon,2027,emerging,0.40
+SEN,Senegal,1921,emerging,0.40
+PAK,Pakistan,1707,emerging,0.40
+TJK,Tajikistan,1644,emerging,0.40
+BEN,Benin,1635,emerging,0.40
+NPL,Nepal,1535,emerging,0.40
+ZMB,Zambia,1353,emerging,0.40
+UGA,Uganda,1353,emerging,0.40
+TZA,Tanzania,1302,emerging,0.40
+GNB,Guinea-Bissau,1225,emerging,0.40
+NGA,Nigeria,1200,emerging,0.40
+TCD,Chad,1139,emerging,0.40
+BFA,Burkina Faso,1115,emerging,0.40
+MMR,Myanmar,1097,emerging,0.40
+RWA,Rwanda,1043,emerging,0.40
+MLI,Mali,1014,emerging,0.40
+SLE,Sierra Leone,980,emerging,0.40
+LBR,Liberia,904,emerging,0.40
+GMB,Gambia,890,emerging,0.40
+NER,Niger,789,emerging,0.40
+COD,Democratic Republic of the Congo,772,emerging,0.40
+MOZ,Mozambique,690,emerging,0.40
+MWI,Malawi,622,emerging,0.40
+MDG,Madagascar,616,emerging,0.40
+YEM,Yemen,415,emerging,0.40
+AFG,Afghanistan,380,emerging,0.40

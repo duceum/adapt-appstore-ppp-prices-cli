@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "adapt-prices-bot"
+version = "0.1.0"
+description = "Regional PPP pricing for App Store in-app purchases and subscriptions: GDP-based price localization across 175+ countries via the App Store Connect API"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Aleksandr Belousov" }]
+keywords = [
+    "app-store-connect", "app-store", "pricing", "purchasing-power-parity",
+    "price-localization", "in-app-purchase", "subscriptions", "ios", "monetization",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Software Development :: Build Tools",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "httpx>=0.27",
+    "PyJWT[crypto]>=2.8",
+    "openai>=1.50",
+    "python-dotenv>=1.0",
+]
+
+[project.scripts]
+adapt-prices-bot = "src.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["src*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--ignore=tests/integration"
+[project.urls]
+Homepage = "https://github.com/duceum/adapt-prices-bot"
+Repository = "https://github.com/duceum/adapt-prices-bot"
+Issues = "https://github.com/duceum/adapt-prices-bot/issues"
