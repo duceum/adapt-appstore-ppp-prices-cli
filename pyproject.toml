@@ -39,6 +39,6 @@ include = ["src*"]
 testpaths = ["tests"]
 addopts = "--ignore=tests/integration"
 [project.urls]
-Homepage = "https://github.com/duceum/adapt-prices-bot"
-Repository = "https://github.com/duceum/adapt-prices-bot"
-Issues = "https://github.com/duceum/adapt-prices-bot/issues"
+Homepage = "https://github.com/duceum/adapt-appstore-prices-cli"
+Repository = "https://github.com/duceum/adapt-appstore-prices-cli"
+Issues = "https://github.com/duceum/adapt-appstore-prices-cli/issues"
