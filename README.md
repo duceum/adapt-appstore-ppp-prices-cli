@@ -1,10 +1,10 @@
-# Adapt Prices Bot
+# Grow App Store Revenue with Regional Pricing — Automatic PPP Price Localization for 175+ Countries
 
 ![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 ![Tests](https://img.shields.io/badge/tests-127%20passing-brightgreen)
 
-**Regional pricing automation for the App Store.** Localizes in-app purchase and subscription prices across **175+ countries** by **purchasing power parity (PPP)**: GDP-per-capita coefficients, optional AI tuning for your app type, and price tiers applied directly through the **App Store Connect API** — one command instead of hours in the App Store Connect UI.
+**Adapt Prices Bot** localizes App Store in-app purchase and subscription prices across **175+ countries** by **purchasing power parity (PPP)**: GDP-per-capita coefficients, optional AI tuning for your app type, and price tiers applied directly through the **App Store Connect API** — one command instead of hours in the App Store Connect UI.
 
 > **[Документация на русском (README.ru.md)](README.ru.md)**
 
