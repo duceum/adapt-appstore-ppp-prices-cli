@@ -8,52 +8,52 @@ CYM,Cayman Islands,97583,premium,1.10
 SGP,Singapore,94481,premium,1.10
 NOR,Norway,91884,premium,1.10
 USA,United States,89599,usa,1.00
-DNK,Denmark,76581,high_income,0.85
-MAC,Macau,74921,high_income,0.85
-NLD,Netherlands,73174,high_income,0.85
-QAT,Qatar,71441,high_income,0.85
-AUS,Australia,65946,high_income,0.85
-SWE,Sweden,62036,high_income,0.85
-AUT,Austria,61694,high_income,0.85
-BEL,Belgium,60418,high_income,0.85
-ISR,Israel,60009,high_income,0.85
-DEU,Germany,59925,high_income,0.85
-HKG,Hong Kong,56844,high_income,0.85
-GBR,United Kingdom,56661,high_income,0.85
-FIN,Finland,56084,high_income,0.85
-CAN,Canada,54935,high_income,0.85
-ARE,United Arab Emirates,51348,high_income,0.85
-NZL,New Zealand,49383,upper_middle,0.675
-MLT,Malta,49277,upper_middle,0.675
-FRA,France,48982,upper_middle,0.675
-ITA,Italy,43161,upper_middle,0.675
-CYP,Cyprus,42413,upper_middle,0.675
-BHS,Bahamas,39726,upper_middle,0.675
-ESP,Spain,38040,upper_middle,0.675
-TWN,Taiwan,37827,upper_middle,0.675
-SVN,Slovenia,37178,upper_middle,0.675
-KOR,South Korea,35962,upper_middle,0.675
-SAU,Saudi Arabia,35231,upper_middle,0.675
-CZE,Czechia,35161,upper_middle,0.675
-JPN,Japan,34713,upper_middle,0.675
-VGB,British Virgin Islands,34200,upper_middle,0.675
-EST,Estonia,34041,upper_middle,0.675
-MSR,Montserrat,34000,upper_middle,0.675
-BRN,Brunei,33858,upper_middle,0.675
-LTU,Lithuania,32982,upper_middle,0.675
-PRT,Portugal,31415,upper_middle,0.675
-GUY,Guyana,31378,upper_middle,0.675
-KWT,Kuwait,30805,upper_middle,0.675
-TCA,Turks and Caicos Islands,30349,upper_middle,0.675
-BHR,Bahrain,29253,upper_middle,0.675
-AIA,Anguilla,28850,upper_middle,0.675
-SVK,Slovakia,28524,upper_middle,0.675
-POL,Poland,28485,upper_middle,0.675
-GRC,Greece,27170,upper_middle,0.675
-HRV,Croatia,26958,upper_middle,0.675
-BRB,Barbados,25927,upper_middle,0.675
-HUN,Hungary,25916,upper_middle,0.675
-LVA,Latvia,25630,upper_middle,0.675
+DNK,Denmark,76581,high_income,0.90
+MAC,Macau,74921,high_income,0.90
+NLD,Netherlands,73174,high_income,0.90
+QAT,Qatar,71441,high_income,0.90
+AUS,Australia,65946,high_income,0.90
+SWE,Sweden,62036,high_income,0.90
+AUT,Austria,61694,high_income,0.90
+BEL,Belgium,60418,high_income,0.90
+ISR,Israel,60009,high_income,0.90
+DEU,Germany,59925,high_income,0.90
+HKG,Hong Kong,56844,high_income,0.90
+GBR,United Kingdom,56661,high_income,0.90
+FIN,Finland,56084,high_income,0.90
+CAN,Canada,54935,high_income,0.90
+ARE,United Arab Emirates,51348,high_income,0.90
+NZL,New Zealand,49383,upper_middle,0.75
+MLT,Malta,49277,upper_middle,0.75
+FRA,France,48982,upper_middle,0.75
+ITA,Italy,43161,upper_middle,0.75
+CYP,Cyprus,42413,upper_middle,0.75
+BHS,Bahamas,39726,upper_middle,0.75
+ESP,Spain,38040,upper_middle,0.75
+TWN,Taiwan,37827,upper_middle,0.75
+SVN,Slovenia,37178,upper_middle,0.75
+KOR,South Korea,35962,upper_middle,0.75
+SAU,Saudi Arabia,35231,upper_middle,0.75
+CZE,Czechia,35161,upper_middle,0.75
+JPN,Japan,34713,upper_middle,0.75
+VGB,British Virgin Islands,34200,upper_middle,0.75
+EST,Estonia,34041,upper_middle,0.75
+MSR,Montserrat,34000,upper_middle,0.75
+BRN,Brunei,33858,upper_middle,0.75
+LTU,Lithuania,32982,upper_middle,0.75
+PRT,Portugal,31415,upper_middle,0.75
+GUY,Guyana,31378,upper_middle,0.75
+KWT,Kuwait,30805,upper_middle,0.75
+TCA,Turks and Caicos Islands,30349,upper_middle,0.75
+BHR,Bahrain,29253,upper_middle,0.75
+AIA,Anguilla,28850,upper_middle,0.75
+SVK,Slovakia,28524,upper_middle,0.75
+POL,Poland,28485,upper_middle,0.75
+GRC,Greece,27170,upper_middle,0.75
+HRV,Croatia,26958,upper_middle,0.75
+BRB,Barbados,25927,upper_middle,0.75
+HUN,Hungary,25916,upper_middle,0.75
+LVA,Latvia,25630,upper_middle,0.75
 URY,Uruguay,24380,lower_middle,0.50
 ROU,Romania,22436,lower_middle,0.50
 ATG,Antigua and Barbuda,22314,lower_middle,0.50
