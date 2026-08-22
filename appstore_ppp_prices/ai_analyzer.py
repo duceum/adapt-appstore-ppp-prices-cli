@@ -4,13 +4,14 @@ import hashlib
 import json
 import logging
 from dataclasses import asdict, dataclass
-from pathlib import Path
 
 from openai import OpenAI
 
+from appstore_ppp_prices.paths import user_cache_dir
+
 log = logging.getLogger(__name__)
 
-CACHE_DIR = Path(__file__).resolve().parent.parent / ".ai_cache"
+CACHE_DIR = user_cache_dir()
 
 
 @dataclass
@@ -118,7 +119,7 @@ def _load_cache(app_name: str) -> AIResult | None:
 
 def _save_cache(app_name: str, result: AIResult) -> None:
     try:
-        CACHE_DIR.mkdir(exist_ok=True)
+        CACHE_DIR.mkdir(parents=True, exist_ok=True)
         key = _cache_key(app_name)
         path = CACHE_DIR / f"{key}.json"
         path.write_text(json.dumps(asdict(result), indent=2))
