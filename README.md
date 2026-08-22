@@ -46,12 +46,15 @@ Should show `Python 3.10` or higher.
 
 ### Step 2: Download the Project
 
-Download and unzip the project folder (or `git clone` if you know how).
+Open a terminal and run:
+```
+git clone https://github.com/duceum/adapt-appstore-ppp-prices-cli.git
+cd adapt-appstore-prices-cli
+```
 
-Open a terminal and navigate to the project folder:
-```
-cd path/to/Adapt-bot
-```
+No `git` installed? Get it with `brew install git` (macOS) or from https://git-scm.com/downloads (Windows).
+
+Prefer not to use git? Download the ZIP instead: https://github.com/duceum/adapt-appstore-ppp-prices-cli/archive/refs/heads/main.zip — unzip it, then `cd` into the unzipped folder.
 
 ### Step 3: Install Dependencies
 

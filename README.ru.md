@@ -40,12 +40,15 @@ python3 --version
 
 ### Шаг 2: Скачать проект
 
-Скачайте папку проекта и разархивируйте её (или клонируйте через git, если умеете).
+Откройте терминал и выполните:
+```
+git clone https://github.com/duceum/adapt-appstore-ppp-prices-cli.git
+cd adapt-appstore-prices-cli
+```
 
-Откройте терминал и перейдите в папку проекта:
-```
-cd путь/к/Adapt-bot
-```
+Нет `git`? Установите его командой `brew install git` (macOS) или скачайте с https://git-scm.com/downloads (Windows).
+
+Не хотите возиться с git? Скачайте архив: https://github.com/duceum/adapt-appstore-ppp-prices-cli/archive/refs/heads/main.zip — распакуйте его и перейдите в распакованную папку командой `cd`.
 
 ### Шаг 3: Установить зависимости
 
