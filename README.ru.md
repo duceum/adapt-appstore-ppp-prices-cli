@@ -3,7 +3,7 @@
 ![PyPI](https://img.shields.io/pypi/v/appstore-ppp-prices)
 ![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
-![Tests](https://img.shields.io/badge/tests-141%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-164%20passing-brightgreen)
 
 **appstore-ppp-prices** — бесплатная утилита с открытым исходным кодом, которая массово обновляет цены на встроенные покупки (IAP) и подписки в App Store сразу в **175+ странах** по **паритету покупательной способности (ППС, PPP)**. Берёт коэффициенты из ВВП на душу населения, при желании подстраивает их через GPT под тип вашего приложения и записывает цены напрямую через **App Store Connect API** — одна команда вместо вечера кликов по территориям.
 

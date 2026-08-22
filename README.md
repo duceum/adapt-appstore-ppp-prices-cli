@@ -3,7 +3,7 @@
 ![PyPI](https://img.shields.io/pypi/v/appstore-ppp-prices)
 ![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
-![Tests](https://img.shields.io/badge/tests-141%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-164%20passing-brightgreen)
 
 **appstore-ppp-prices** is a free, open-source CLI that bulk-updates App Store in-app purchase and subscription prices across **175+ countries** by **purchasing power parity (PPP)**. It reads GDP-per-capita coefficients, optionally tunes them with GPT for your app type, and writes the prices straight through the **App Store Connect API** — one command instead of an afternoon of clicking through territories.
 

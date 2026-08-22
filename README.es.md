@@ -3,7 +3,7 @@
 ![PyPI](https://img.shields.io/pypi/v/appstore-ppp-prices)
 ![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
-![Tests](https://img.shields.io/badge/tests-141%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-164%20passing-brightgreen)
 
 **appstore-ppp-prices** es una herramienta de línea de comandos gratuita y de código abierto que actualiza de forma masiva los precios de compras dentro de la app (IAP) y suscripciones de la App Store en **175+ países** según la **paridad de poder adquisitivo (PPA, PPP)**. Lee coeficientes basados en el PIB per cápita, opcionalmente los ajusta con GPT según el tipo de tu app, y escribe los precios directamente a través de la **App Store Connect API** — un comando en lugar de una tarde entera haciendo clic por territorios.
 
