@@ -7,11 +7,11 @@ from datetime import date
 
 import httpx
 
-from src.ai_analyzer import analyze_app
-from src.appstore import AppStoreConnectClient, Product, PricePoint
-from src.countries import load_countries
-from src.display import status, find_closest_price_point
-from src.pricing import TargetPrice, calculate_target_prices
+from appstore_ppp_prices.ai_analyzer import analyze_app
+from appstore_ppp_prices.appstore import AppStoreConnectClient, Product, PricePoint
+from appstore_ppp_prices.countries import load_countries
+from appstore_ppp_prices.display import status, find_closest_price_point
+from appstore_ppp_prices.pricing import TargetPrice, calculate_target_prices
 
 log = logging.getLogger(__name__)
 

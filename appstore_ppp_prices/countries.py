@@ -3,11 +3,12 @@ from __future__ import annotations
 import csv
 import logging
 from dataclasses import dataclass
+from importlib.resources import files
 from pathlib import Path
 
 log = logging.getLogger(__name__)
 
-COUNTRIES_CSV = Path(__file__).resolve().parent.parent / "countries.csv"
+COUNTRIES_CSV = Path(str(files("appstore_ppp_prices") / "countries.csv"))
 
 MINIMUM_PRICE_HIGH = 0.99  # premium, usa, high_income
 MINIMUM_PRICE_LOW = 0.49   # upper_middle, lower_middle, emerging

@@ -1,8 +1,8 @@
 from unittest.mock import MagicMock
 
-from src.appstore import PricePoint, Product
-from src.display import find_closest_price_point, list_products, print_dry_run_table
-from src.pricing import TargetPrice
+from appstore_ppp_prices.appstore import PricePoint, Product
+from appstore_ppp_prices.display import find_closest_price_point, list_products, print_dry_run_table
+from appstore_ppp_prices.pricing import TargetPrice
 
 
 class TestFindClosestPricePoint:

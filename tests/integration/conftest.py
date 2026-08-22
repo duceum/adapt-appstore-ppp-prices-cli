@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 from dotenv import load_dotenv
 
-from src.appstore import AppStoreConnectClient
+from appstore_ppp_prices.appstore import AppStoreConnectClient
 
 # Load .env from project root
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent

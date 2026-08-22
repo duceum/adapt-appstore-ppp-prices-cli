@@ -4,9 +4,9 @@ from unittest.mock import MagicMock, patch
 import httpx
 import pytest
 
-from src.appstore import Product, PricePoint
-from src.pipeline import find_product, resolve_territory_prices, calculate_targets, apply_prices
-from src.pricing import TargetPrice
+from appstore_ppp_prices.appstore import Product, PricePoint
+from appstore_ppp_prices.pipeline import find_product, resolve_territory_prices, calculate_targets, apply_prices
+from appstore_ppp_prices.pricing import TargetPrice
 
 
 def _product(pid: str, is_sub: bool = False) -> Product:
@@ -113,7 +113,7 @@ class TestApplyPrices:
 
 
 class TestCalculateTargetsMissingCsv:
-    @patch("src.pipeline.load_countries", side_effect=FileNotFoundError("countries.csv"))
+    @patch("appstore_ppp_prices.pipeline.load_countries", side_effect=FileNotFoundError("countries.csv"))
     def test_exits_on_missing_countries_csv(self, _mock):
         product = _product("weekly")
         with pytest.raises(SystemExit):

@@ -6,8 +6,8 @@ Run: python3 -m pytest tests/integration/ -v
 """
 from __future__ import annotations
 
-from src.appstore import AppStoreConnectClient
-from src.pipeline import find_product, calculate_targets, resolve_territory_prices
+from appstore_ppp_prices.appstore import AppStoreConnectClient
+from appstore_ppp_prices.pipeline import find_product, calculate_targets, resolve_territory_prices
 
 
 class TestFullPipeline:

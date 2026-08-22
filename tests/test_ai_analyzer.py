@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock, patch
 import json
 
-from src.ai_analyzer import AIResult, CACHE_DIR, _save_cache, analyze_app, clear_cache
+from appstore_ppp_prices.ai_analyzer import AIResult, CACHE_DIR, _save_cache, analyze_app, clear_cache
 
 
 def _mock_response(content: str):
@@ -13,8 +13,8 @@ def _mock_response(content: str):
 
 
 class TestAnalyzeApp:
-    @patch("src.ai_analyzer._load_cache", return_value=None)
-    @patch("src.ai_analyzer.OpenAI")
+    @patch("appstore_ppp_prices.ai_analyzer._load_cache", return_value=None)
+    @patch("appstore_ppp_prices.ai_analyzer.OpenAI")
     def test_returns_coefficients(self, mock_openai_cls, _mock_cache):
         ai_response = json.dumps({
             "app_type": "game",
@@ -41,15 +41,15 @@ class TestAnalyzeApp:
         assert result.coefficients["emerging"] == 0.4
         assert "usa" not in result.coefficients
 
-    @patch("src.ai_analyzer._load_cache", return_value=None)
-    @patch("src.ai_analyzer.OpenAI")
+    @patch("appstore_ppp_prices.ai_analyzer._load_cache", return_value=None)
+    @patch("appstore_ppp_prices.ai_analyzer.OpenAI")
     def test_returns_none_on_api_error(self, mock_openai_cls, _mock_cache):
         mock_openai_cls.side_effect = Exception("API error")
         result = analyze_app("fake-key", "Test App", [])
         assert result is None
 
-    @patch("src.ai_analyzer._load_cache", return_value=None)
-    @patch("src.ai_analyzer.OpenAI")
+    @patch("appstore_ppp_prices.ai_analyzer._load_cache", return_value=None)
+    @patch("appstore_ppp_prices.ai_analyzer.OpenAI")
     def test_returns_none_on_invalid_json(self, mock_openai_cls, _mock_cache):
         mock_client = MagicMock()
         mock_client.chat.completions.create.return_value = _mock_response("not valid json")
@@ -58,8 +58,8 @@ class TestAnalyzeApp:
         result = analyze_app("fake-key", "Test App", [])
         assert result is None
 
-    @patch("src.ai_analyzer._load_cache", return_value=None)
-    @patch("src.ai_analyzer.OpenAI")
+    @patch("appstore_ppp_prices.ai_analyzer._load_cache", return_value=None)
+    @patch("appstore_ppp_prices.ai_analyzer.OpenAI")
     def test_returns_none_on_missing_coefficients_key(self, mock_openai_cls, _mock_cache):
         mock_client = MagicMock()
         mock_client.chat.completions.create.return_value = _mock_response(json.dumps({"app_type": "game"}))
@@ -68,8 +68,8 @@ class TestAnalyzeApp:
         result = analyze_app("fake-key", "Test App", [])
         assert result is None
 
-    @patch("src.ai_analyzer.OpenAI")
-    @patch("src.ai_analyzer.CACHE_DIR")
+    @patch("appstore_ppp_prices.ai_analyzer.OpenAI")
+    @patch("appstore_ppp_prices.ai_analyzer.CACHE_DIR")
     def test_returns_result_even_when_cache_write_fails(self, mock_cache_dir, mock_openai_cls):
         """Cache write failure should not lose the valid AI result."""
         mock_cache_dir.mkdir.side_effect = OSError("read-only filesystem")
@@ -89,8 +89,8 @@ class TestAnalyzeApp:
         assert result.coefficients["emerging"] == 0.6
 
 
-    @patch("src.ai_analyzer._load_cache", return_value=None)
-    @patch("src.ai_analyzer.OpenAI")
+    @patch("appstore_ppp_prices.ai_analyzer._load_cache", return_value=None)
+    @patch("appstore_ppp_prices.ai_analyzer.OpenAI")
     def test_returns_none_on_empty_choices(self, mock_openai_cls, _mock_cache):
         """Empty choices array should return None, not IndexError."""
         mock_client = MagicMock()
@@ -102,8 +102,8 @@ class TestAnalyzeApp:
         result = analyze_app("fake-key", "Test App", [{"name": "weekly", "us_price": 4.99}])
         assert result is None
 
-    @patch("src.ai_analyzer._load_cache", return_value=None)
-    @patch("src.ai_analyzer.OpenAI")
+    @patch("appstore_ppp_prices.ai_analyzer._load_cache", return_value=None)
+    @patch("appstore_ppp_prices.ai_analyzer.OpenAI")
     def test_returns_none_on_invalid_coefficient_value(self, mock_openai_cls, _mock_cache):
         """Non-numeric coefficient value should return None, not crash."""
         ai_response = json.dumps({
@@ -120,8 +120,8 @@ class TestAnalyzeApp:
         assert result is None
 
 
-    @patch("src.ai_analyzer._load_cache", return_value=None)
-    @patch("src.ai_analyzer.OpenAI")
+    @patch("appstore_ppp_prices.ai_analyzer._load_cache", return_value=None)
+    @patch("appstore_ppp_prices.ai_analyzer.OpenAI")
     def test_handles_markdown_only_backticks(self, mock_openai_cls, _mock_cache):
         """Response of just '```' should not IndexError."""
         mock_client = MagicMock()
@@ -131,8 +131,8 @@ class TestAnalyzeApp:
         result = analyze_app("fake-key", "Test App", [{"name": "weekly", "us_price": 4.99}])
         assert result is None
 
-    @patch("src.ai_analyzer._load_cache", return_value=None)
-    @patch("src.ai_analyzer.OpenAI")
+    @patch("appstore_ppp_prices.ai_analyzer._load_cache", return_value=None)
+    @patch("appstore_ppp_prices.ai_analyzer.OpenAI")
     def test_strips_markdown_code_block(self, mock_openai_cls, _mock_cache):
         """JSON wrapped in ```json ... ``` should be parsed correctly."""
         raw_json = json.dumps({
@@ -151,7 +151,7 @@ class TestAnalyzeApp:
 
 class TestClearCache:
     def test_removes_json_files(self, tmp_path):
-        with patch("src.ai_analyzer.CACHE_DIR", tmp_path):
+        with patch("appstore_ppp_prices.ai_analyzer.CACHE_DIR", tmp_path):
             (tmp_path / "abc123.json").write_text("{}")
             (tmp_path / "def456.json").write_text("{}")
             removed = clear_cache()
@@ -159,11 +159,11 @@ class TestClearCache:
             assert not tmp_path.exists()
 
     def test_returns_zero_when_no_cache_dir(self, tmp_path):
-        with patch("src.ai_analyzer.CACHE_DIR", tmp_path / "nonexistent"):
+        with patch("appstore_ppp_prices.ai_analyzer.CACHE_DIR", tmp_path / "nonexistent"):
             assert clear_cache() == 0
 
     def test_ignores_non_json_files(self, tmp_path):
-        with patch("src.ai_analyzer.CACHE_DIR", tmp_path):
+        with patch("appstore_ppp_prices.ai_analyzer.CACHE_DIR", tmp_path):
             (tmp_path / "abc123.json").write_text("{}")
             (tmp_path / "readme.txt").write_text("hi")
             removed = clear_cache()
@@ -175,6 +175,6 @@ class TestSaveCache:
     def test_does_not_raise_on_write_error(self):
         """_save_cache should log warning, not raise."""
         result = AIResult(app_type="game", elasticity="high", reasoning="test", coefficients={"emerging": 0.4})
-        with patch("src.ai_analyzer.CACHE_DIR") as mock_dir:
+        with patch("appstore_ppp_prices.ai_analyzer.CACHE_DIR") as mock_dir:
             mock_dir.mkdir.side_effect = OSError("permission denied")
             _save_cache("App", result)  # should not raise

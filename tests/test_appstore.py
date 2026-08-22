@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import httpx
 
-from src.appstore import AppStoreConnectClient, Product, PricePoint
+from appstore_ppp_prices.appstore import AppStoreConnectClient, Product, PricePoint
 
 
 class TestContextManager:

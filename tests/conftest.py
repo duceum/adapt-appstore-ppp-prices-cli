@@ -1,6 +1,6 @@
 import pytest
 
-from src import ai_analyzer
+from appstore_ppp_prices import ai_analyzer
 
 
 @pytest.fixture(autouse=True)

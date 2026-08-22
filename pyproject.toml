@@ -3,7 +3,7 @@ requires = ["setuptools>=68.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "adapt-prices-bot"
+name = "appstore-ppp-prices"
 version = "0.1.0"
 description = "Regional PPP pricing for App Store in-app purchases and subscriptions: GDP-based price localization across 175+ countries via the App Store Connect API"
 readme = "README.md"
@@ -30,10 +30,14 @@ dependencies = [
 ]
 
 [project.scripts]
-adapt-prices-bot = "src.cli:main"
+appstore-ppp-prices = "appstore_ppp_prices.cli:main"
+ppp-pricing = "appstore_ppp_prices.cli:main"
+
+[tool.setuptools.package-data]
+appstore_ppp_prices = ["countries.csv"]
 
 [tool.setuptools.packages.find]
-include = ["src*"]
+include = ["appstore_ppp_prices*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
