@@ -6,6 +6,7 @@ from unittest.mock import MagicMock, patch
 import httpx
 import pytest
 
+from appstore_ppp_prices import __version__
 from appstore_ppp_prices.appstore import Product
 from appstore_ppp_prices.cli import (
     VALID_CATEGORIES,
@@ -333,3 +334,15 @@ class TestValidateSubscriptionFlags:
 
     def test_allows_non_subscription_without_flags(self):
         validate_subscription_flags(self._iap(), preserved=False, start_date=None)
+
+
+class TestVersionFlag:
+    def test_reports_the_installed_version(self, capsys):
+        with pytest.raises(SystemExit) as exc:
+            build_parser().parse_args(["--version"])
+        assert exc.value.code == 0
+        assert __version__ in capsys.readouterr().out
+
+    def test_version_is_not_a_placeholder(self):
+        """Guards against the package being importable but not installed in CI."""
+        assert __version__ != "0.0.0+unknown"
