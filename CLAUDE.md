@@ -63,7 +63,10 @@ Required:
 - `ASC_PRIVATE_KEY_PATH` — Path to .p8 private key file
 
 Optional:
-- `OPENAI_API_KEY` — Enables AI pricing analysis (GPT-5.2)
+- `LLM_API_KEY` / `OPENAI_API_KEY` — Enables AI pricing analysis
+- `LLM_BASE_URL` / `OPENAI_BASE_URL` — Any OpenAI-compatible endpoint (OpenRouter, Groq, Ollama, vLLM); default `https://api.openai.com/v1`
+- `LLM_MODEL` / `OPENAI_MODEL` — Model name; default `gpt-5.2`
+- `LLM_REQUEST_TIMEOUT` / `OPENAI_REQUEST_TIMEOUT` — Seconds, default 120
 - `ASC_REQUEST_TIMEOUT` — API timeout in seconds (default: 30)
 - `PPP_PRICING_CONFIG` — Directory holding `.env` and the `.p8` key (same role as `--config`)
 - `XDG_CONFIG_HOME` / `XDG_CACHE_HOME` — Standard overrides for the config and cache directories

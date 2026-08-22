@@ -2,20 +2,13 @@ from unittest.mock import MagicMock, patch
 import json
 
 from appstore_ppp_prices.ai_analyzer import AIResult, CACHE_DIR, _save_cache, analyze_app, clear_cache
-
-
-def _mock_response(content: str):
-    choice = MagicMock()
-    choice.message.content = content
-    response = MagicMock()
-    response.choices = [choice]
-    return response
+from appstore_ppp_prices.llm import LLMError
 
 
 class TestAnalyzeApp:
     @patch("appstore_ppp_prices.ai_analyzer._load_cache", return_value=None)
-    @patch("appstore_ppp_prices.ai_analyzer.OpenAI")
-    def test_returns_coefficients(self, mock_openai_cls, _mock_cache):
+    @patch("appstore_ppp_prices.ai_analyzer.chat_completion")
+    def test_returns_coefficients(self, mock_chat, _mock_cache):
         ai_response = json.dumps({
             "app_type": "game",
             "elasticity": "high",
@@ -27,9 +20,7 @@ class TestAnalyzeApp:
                 "emerging": 0.40,
             },
         })
-        mock_client = MagicMock()
-        mock_client.chat.completions.create.return_value = _mock_response(ai_response)
-        mock_openai_cls.return_value = mock_client
+        mock_chat.return_value = ai_response
 
         result = analyze_app("fake-key", "Test App", [{"name": "weekly", "us_price": 4.99}])
 
@@ -42,35 +33,31 @@ class TestAnalyzeApp:
         assert "usa" not in result.coefficients
 
     @patch("appstore_ppp_prices.ai_analyzer._load_cache", return_value=None)
-    @patch("appstore_ppp_prices.ai_analyzer.OpenAI")
-    def test_returns_none_on_api_error(self, mock_openai_cls, _mock_cache):
-        mock_openai_cls.side_effect = Exception("API error")
+    @patch("appstore_ppp_prices.ai_analyzer.chat_completion")
+    def test_returns_none_on_api_error(self, mock_chat, _mock_cache):
+        mock_chat.side_effect = LLMError("API error")
         result = analyze_app("fake-key", "Test App", [])
         assert result is None
 
     @patch("appstore_ppp_prices.ai_analyzer._load_cache", return_value=None)
-    @patch("appstore_ppp_prices.ai_analyzer.OpenAI")
-    def test_returns_none_on_invalid_json(self, mock_openai_cls, _mock_cache):
-        mock_client = MagicMock()
-        mock_client.chat.completions.create.return_value = _mock_response("not valid json")
-        mock_openai_cls.return_value = mock_client
+    @patch("appstore_ppp_prices.ai_analyzer.chat_completion")
+    def test_returns_none_on_invalid_json(self, mock_chat, _mock_cache):
+        mock_chat.return_value = "not valid json"
 
         result = analyze_app("fake-key", "Test App", [])
         assert result is None
 
     @patch("appstore_ppp_prices.ai_analyzer._load_cache", return_value=None)
-    @patch("appstore_ppp_prices.ai_analyzer.OpenAI")
-    def test_returns_none_on_missing_coefficients_key(self, mock_openai_cls, _mock_cache):
-        mock_client = MagicMock()
-        mock_client.chat.completions.create.return_value = _mock_response(json.dumps({"app_type": "game"}))
-        mock_openai_cls.return_value = mock_client
+    @patch("appstore_ppp_prices.ai_analyzer.chat_completion")
+    def test_returns_none_on_missing_coefficients_key(self, mock_chat, _mock_cache):
+        mock_chat.return_value = json.dumps({"app_type": "game"})
 
         result = analyze_app("fake-key", "Test App", [])
         assert result is None
 
-    @patch("appstore_ppp_prices.ai_analyzer.OpenAI")
+    @patch("appstore_ppp_prices.ai_analyzer.chat_completion")
     @patch("appstore_ppp_prices.ai_analyzer.CACHE_DIR")
-    def test_returns_result_even_when_cache_write_fails(self, mock_cache_dir, mock_openai_cls):
+    def test_returns_result_even_when_cache_write_fails(self, mock_cache_dir, mock_chat):
         """Cache write failure should not lose the valid AI result."""
         mock_cache_dir.mkdir.side_effect = OSError("read-only filesystem")
 
@@ -80,9 +67,7 @@ class TestAnalyzeApp:
             "reasoning": "test",
             "coefficients": {"premium": 1.05, "usa": 1.00, "emerging": 0.60},
         })
-        mock_client = MagicMock()
-        mock_client.chat.completions.create.return_value = _mock_response(ai_response)
-        mock_openai_cls.return_value = mock_client
+        mock_chat.return_value = ai_response
 
         result = analyze_app("fake-key", "Test App", [{"name": "pro", "us_price": 9.99}])
         assert isinstance(result, AIResult)
@@ -90,21 +75,8 @@ class TestAnalyzeApp:
 
 
     @patch("appstore_ppp_prices.ai_analyzer._load_cache", return_value=None)
-    @patch("appstore_ppp_prices.ai_analyzer.OpenAI")
-    def test_returns_none_on_empty_choices(self, mock_openai_cls, _mock_cache):
-        """Empty choices array should return None, not IndexError."""
-        mock_client = MagicMock()
-        response = MagicMock()
-        response.choices = []
-        mock_client.chat.completions.create.return_value = response
-        mock_openai_cls.return_value = mock_client
-
-        result = analyze_app("fake-key", "Test App", [{"name": "weekly", "us_price": 4.99}])
-        assert result is None
-
-    @patch("appstore_ppp_prices.ai_analyzer._load_cache", return_value=None)
-    @patch("appstore_ppp_prices.ai_analyzer.OpenAI")
-    def test_returns_none_on_invalid_coefficient_value(self, mock_openai_cls, _mock_cache):
+    @patch("appstore_ppp_prices.ai_analyzer.chat_completion")
+    def test_returns_none_on_invalid_coefficient_value(self, mock_chat, _mock_cache):
         """Non-numeric coefficient value should return None, not crash."""
         ai_response = json.dumps({
             "app_type": "game",
@@ -112,37 +84,31 @@ class TestAnalyzeApp:
             "reasoning": "test",
             "coefficients": {"premium": "not_a_number", "usa": 1.00},
         })
-        mock_client = MagicMock()
-        mock_client.chat.completions.create.return_value = _mock_response(ai_response)
-        mock_openai_cls.return_value = mock_client
+        mock_chat.return_value = ai_response
 
         result = analyze_app("fake-key", "Test App", [{"name": "weekly", "us_price": 4.99}])
         assert result is None
 
 
     @patch("appstore_ppp_prices.ai_analyzer._load_cache", return_value=None)
-    @patch("appstore_ppp_prices.ai_analyzer.OpenAI")
-    def test_handles_markdown_only_backticks(self, mock_openai_cls, _mock_cache):
+    @patch("appstore_ppp_prices.ai_analyzer.chat_completion")
+    def test_handles_markdown_only_backticks(self, mock_chat, _mock_cache):
         """Response of just '```' should not IndexError."""
-        mock_client = MagicMock()
-        mock_client.chat.completions.create.return_value = _mock_response("```")
-        mock_openai_cls.return_value = mock_client
+        mock_chat.return_value = "```"
 
         result = analyze_app("fake-key", "Test App", [{"name": "weekly", "us_price": 4.99}])
         assert result is None
 
     @patch("appstore_ppp_prices.ai_analyzer._load_cache", return_value=None)
-    @patch("appstore_ppp_prices.ai_analyzer.OpenAI")
-    def test_strips_markdown_code_block(self, mock_openai_cls, _mock_cache):
+    @patch("appstore_ppp_prices.ai_analyzer.chat_completion")
+    def test_strips_markdown_code_block(self, mock_chat, _mock_cache):
         """JSON wrapped in ```json ... ``` should be parsed correctly."""
         raw_json = json.dumps({
             "app_type": "game", "elasticity": "high", "reasoning": "test",
             "coefficients": {"premium": 1.10, "usa": 1.00, "emerging": 0.40},
         })
         wrapped = f"```json\n{raw_json}\n```"
-        mock_client = MagicMock()
-        mock_client.chat.completions.create.return_value = _mock_response(wrapped)
-        mock_openai_cls.return_value = mock_client
+        mock_chat.return_value = wrapped
 
         result = analyze_app("fake-key", "Test App", [{"name": "weekly", "us_price": 4.99}])
         assert isinstance(result, AIResult)

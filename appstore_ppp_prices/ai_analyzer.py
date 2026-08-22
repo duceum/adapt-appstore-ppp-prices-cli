@@ -5,8 +5,7 @@ import json
 import logging
 from dataclasses import asdict, dataclass
 
-from openai import OpenAI
-
+from appstore_ppp_prices.llm import LLMError, chat_completion
 from appstore_ppp_prices.paths import user_cache_dir
 
 log = logging.getLogger(__name__)
@@ -149,30 +148,27 @@ def analyze_app(
     )
 
     try:
-        client = OpenAI(api_key=api_key)
-        response = client.chat.completions.create(
-            model="gpt-5.2",
-            temperature=0.3,
-            max_completion_tokens=2000,
-            messages=[
+        text = chat_completion(
+            api_key,
+            [
                 {"role": "system", "content": SYSTEM_MESSAGE},
                 {"role": "user", "content": prompt},
             ],
-        )
-        if not response.choices:
-            log.warning("AI analysis returned empty choices")
-            return None
-        text = response.choices[0].message.content.strip()
-        # Strip markdown code blocks if model wraps JSON
-        if text.startswith("```"):
-            parts = text.split("\n", 1)
-            text = parts[1].rsplit("```", 1)[0].strip() if len(parts) > 1 else ""
-        data = json.loads(text)
-    except (json.JSONDecodeError, AttributeError) as e:
-        log.warning("AI response parsing failed: %s", e)
+            temperature=0.3,
+            max_tokens=2000,
+        ).strip()
+    except LLMError as e:
+        log.warning("AI API call failed: %s", e)
         return None
-    except Exception as e:
-        log.warning("AI API call failed: %s: %s", type(e).__name__, e)
+
+    # Strip markdown code blocks if model wraps JSON
+    if text.startswith("```"):
+        parts = text.split("\n", 1)
+        text = parts[1].rsplit("```", 1)[0].strip() if len(parts) > 1 else ""
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError as e:
+        log.warning("AI response parsing failed: %s", e)
         return None
 
     try:

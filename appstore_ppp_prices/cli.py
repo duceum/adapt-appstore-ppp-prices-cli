@@ -13,6 +13,7 @@ import httpx
 from appstore_ppp_prices import __version__
 from appstore_ppp_prices.appstore import AppStoreConnectClient, Product
 from appstore_ppp_prices.display import status, find_closest_price_point, list_products, print_dry_run_table
+from appstore_ppp_prices.llm import configured_api_key
 from appstore_ppp_prices.paths import CONFIG_ENV_VAR, resolve_config_dir, user_config_dir
 from appstore_ppp_prices.pipeline import (
     apply_prices,
@@ -143,7 +144,7 @@ def load_config(config_dir: Path) -> tuple[str, str, Path, str | None]:
     key_id = os.getenv("ASC_KEY_ID")
     issuer_id = os.getenv("ASC_ISSUER_ID")
     pk_path_str = os.getenv("ASC_PRIVATE_KEY_PATH")
-    openai_key = os.getenv("OPENAI_API_KEY")
+    openai_key = configured_api_key()
 
     if not all([key_id, issuer_id, pk_path_str]):
         print("Error: Missing App Store Connect credentials.")

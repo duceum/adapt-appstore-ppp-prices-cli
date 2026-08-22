@@ -46,7 +46,7 @@ mv ~/Downloads/AuthKey_XXXXXXXXXX.p8 ~/.config/ppp-pricing/
 
 You may create `~/.config/ppp-pricing/.env` as a template with empty values for
 `ASC_KEY_ID`, `ASC_ISSUER_ID` and `ASC_PRIVATE_KEY_PATH` (plus optional
-`OPENAI_API_KEY`), and explain what goes in each. `ASC_PRIVATE_KEY_PATH` is just the
+`LLM_API_KEY`), and explain what goes in each. `ASC_PRIVATE_KEY_PATH` is just the
 `.p8` filename — it resolves next to the `.env`.
 
 Do not ask the user to paste key material into the chat, do not read the `.p8` back,
@@ -144,7 +144,7 @@ There is no `usa` coefficient — the US is the base and is always 1.00.
 ## What the numbers mean
 
 Each country sits in one of six tiers by GDP per capita, and each tier has a multiplier
-against the US price. With an `OPENAI_API_KEY` set, GPT adjusts those multipliers for
+against the US price. With an `LLM_API_KEY` set, GPT adjusts those multipliers for
 the app's category and price elasticity — a casual game tolerates far deeper discounts
 than an AI tool that pays server cost per request. Without the key the GDP defaults are
 used, which are perfectly reasonable; do not treat the AI step as required.

@@ -188,6 +188,24 @@ El análisis con IA ajusta los coeficientes al tipo concreto de tu app. Sin él,
 1. Entra en https://platform.openai.com/api-keys
 2. Crea una clave y cópiala (empieza por `sk-`)
 
+<details>
+<summary>Usar otro proveedor en lugar de OpenAI</summary>
+
+La petición es un chat completion con el formato de OpenAI, así que sirve cualquier
+cosa que hable ese formato: OpenRouter, Groq, Together, Fireworks, DeepSeek, o un
+Ollama, LM Studio o vLLM local. Se cambia con dos variables en el `.env`:
+
+```
+LLM_BASE_URL=https://openrouter.ai/api/v1
+LLM_MODEL=meta-llama/llama-3.3-70b-instruct
+```
+
+`LLM_API_KEY` (o `OPENAI_API_KEY`) pasa a contener la clave de ese proveedor. Un modelo local no necesita
+clave, pero la variable tiene que estar puesta igualmente. `LLM_REQUEST_TIMEOUT`
+(segundos, por defecto 120) ayuda con modelos locales lentos.
+
+</details>
+
 ### Paso 4: Crear el archivo de configuración .env
 
 Crea un archivo `.env` junto a la clave, en `~/.config/ppp-pricing/.env` (ojo al punto al principio del nombre):
@@ -201,7 +219,7 @@ Rellena con tus valores:
 ASC_KEY_ID=tu_key_id
 ASC_ISSUER_ID=tu_issuer_id
 ASC_PRIVATE_KEY_PATH=AuthKey_XXXX.p8
-OPENAI_API_KEY=sk-tu-clave
+LLM_API_KEY=sk-tu-clave
 ```
 
 Sustituye por tus valores reales. `ASC_PRIVATE_KEY_PATH` es el nombre del archivo `.p8` descargado — un nombre a secas se resuelve junto al `.env`.

@@ -188,6 +188,23 @@ AI 分析会针对你具体的应用类型调整系数。不用它也完全可�
 1. 打开 https://platform.openai.com/api-keys
 2. 创建密钥并复制（以 `sk-` 开头）
 
+<details>
+<summary>改用 OpenAI 以外的服务商</summary>
+
+请求就是一个 OpenAI 格式的 chat completion，因此任何支持该格式的服务都能用 ——
+OpenRouter、Groq、Together、Fireworks、DeepSeek，或本地的 Ollama、LM Studio、vLLM。
+在 `.env` 里用两个变量切换：
+
+```
+LLM_BASE_URL=https://openrouter.ai/api/v1
+LLM_MODEL=meta-llama/llama-3.3-70b-instruct
+```
+
+此时 `LLM_API_KEY`（或 `OPENAI_API_KEY`）填该服务商的密钥。本地模型不需要密钥，但这个变量仍要填上任意值。
+`LLM_REQUEST_TIMEOUT`（秒，默认 120）对较慢的本地模型有帮助。
+
+</details>
+
 ### 第 4 步：创建 .env 配置文件
 
 在密钥旁边创建 `.env` 文件，路径为 `~/.config/ppp-pricing/.env`（注意文件名开头的点）：
@@ -201,7 +218,7 @@ nano ~/.config/ppp-pricing/.env
 ASC_KEY_ID=你的_key_id
 ASC_ISSUER_ID=你的_issuer_id
 ASC_PRIVATE_KEY_PATH=AuthKey_XXXX.p8
-OPENAI_API_KEY=sk-你的密钥
+LLM_API_KEY=sk-你的密钥
 ```
 
 换成你自己的值。`ASC_PRIVATE_KEY_PATH` 是下载的 `.p8` 文件名——只写文件名时，会在 `.env` 同目录下查找。
