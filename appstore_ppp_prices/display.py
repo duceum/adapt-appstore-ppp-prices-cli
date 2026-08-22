@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from src.appstore import AppStoreConnectClient, Product, PricePoint
-from src.pricing import TargetPrice
+from appstore_ppp_prices.appstore import AppStoreConnectClient, Product, PricePoint
+from appstore_ppp_prices.pricing import TargetPrice
 
 
 def status(msg: str):
@@ -40,7 +40,7 @@ def list_products(client: AppStoreConnectClient, app_id: str, all_products: list
                 next_row += 1
 
     status(f"\nTo process a product, run:")
-    status(f"  adapt-prices-bot --app-id {app_id} --iap <PRODUCT_ID> --dry-run")
+    status(f"  ppp-pricing --app-id {app_id} --iap <PRODUCT_ID> --dry-run")
 
 
 def print_dry_run_table(

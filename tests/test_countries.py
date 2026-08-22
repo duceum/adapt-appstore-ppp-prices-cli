@@ -2,7 +2,7 @@ import csv
 import tempfile
 from pathlib import Path
 
-from src.countries import Country, MINIMUM_PRICE_HIGH, MINIMUM_PRICE_LOW, load_countries
+from appstore_ppp_prices.countries import Country, MINIMUM_PRICE_HIGH, MINIMUM_PRICE_LOW, load_countries
 
 
 def _write_csv(rows: list[dict], path: Path):

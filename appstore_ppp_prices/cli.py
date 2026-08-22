@@ -10,9 +10,9 @@ from pathlib import Path
 from dotenv import load_dotenv
 import httpx
 
-from src.appstore import AppStoreConnectClient, Product
-from src.display import status, find_closest_price_point, list_products, print_dry_run_table
-from src.pipeline import (
+from appstore_ppp_prices.appstore import AppStoreConnectClient, Product
+from appstore_ppp_prices.display import status, find_closest_price_point, list_products, print_dry_run_table
+from appstore_ppp_prices.pipeline import (
     apply_prices,
     calculate_targets,
     find_product,
@@ -24,10 +24,10 @@ DESCRIPTION = """\
 Automated regional pricing for App Store in-app purchases and subscriptions.
 
 Usage:
-  1. List all products:  adapt-prices-bot --app-id ID
-  2. Preview prices:     adapt-prices-bot --app-id ID --iap PRODUCT_ID --dry-run
-  3. Apply prices:       adapt-prices-bot --app-id ID --iap PRODUCT_ID
-  4. Clear AI cache:     adapt-prices-bot --clear-cache
+  1. List all products:  ppp-pricing --app-id ID
+  2. Preview prices:     ppp-pricing --app-id ID --iap PRODUCT_ID --dry-run
+  3. Apply prices:       ppp-pricing --app-id ID --iap PRODUCT_ID
+  4. Clear AI cache:     ppp-pricing --clear-cache
 
 Setup:
   1. Create an API key at https://appstoreconnect.apple.com/access/api
@@ -39,16 +39,16 @@ Setup:
        OPENAI_API_KEY=sk-...  (optional, enables AI analysis)
 
 Examples:
-  adapt-prices-bot --app-id 123456789
-  adapt-prices-bot --app-id 123456789 --iap com.app.weekly --dry-run
-  adapt-prices-bot --app-id 123456789 --iap com.app.weekly
-  adapt-prices-bot --app-id 123456789 --iap com.app.weekly --us-price 5.99 --dry-run
-  adapt-prices-bot --app-id 123456789 --iap com.app.weekly --no-ai --dry-run
-  adapt-prices-bot --app-id 123456789 --iap com.app.weekly --coeff emerging=0.70
-  adapt-prices-bot --app-id 123456789 --iap com.app.weekly --exclude RUS,BLR
-  adapt-prices-bot --app-id 123456789 --iap com.app.weekly --preserved --start-date 2026-08-01
-  adapt-prices-bot --app-id 123456789 --iap com.app.weekly --config ~/keys/
-  adapt-prices-bot --clear-cache
+  ppp-pricing --app-id 123456789
+  ppp-pricing --app-id 123456789 --iap com.app.weekly --dry-run
+  ppp-pricing --app-id 123456789 --iap com.app.weekly
+  ppp-pricing --app-id 123456789 --iap com.app.weekly --us-price 5.99 --dry-run
+  ppp-pricing --app-id 123456789 --iap com.app.weekly --no-ai --dry-run
+  ppp-pricing --app-id 123456789 --iap com.app.weekly --coeff emerging=0.70
+  ppp-pricing --app-id 123456789 --iap com.app.weekly --exclude RUS,BLR
+  ppp-pricing --app-id 123456789 --iap com.app.weekly --preserved --start-date 2026-08-01
+  ppp-pricing --app-id 123456789 --iap com.app.weekly --config ~/keys/
+  ppp-pricing --clear-cache
 """
 
 
@@ -101,7 +101,6 @@ def parse_coefficients(raw: list[str] | None) -> dict[str, float]:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="adapt-prices-bot",
         description=DESCRIPTION,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
@@ -177,7 +176,7 @@ def main():
     logging.getLogger("httpcore").setLevel(logging.WARNING)
 
     if args.clear_cache:
-        from src.ai_analyzer import clear_cache
+        from appstore_ppp_prices.ai_analyzer import clear_cache
         removed = clear_cache()
         print(f"Cleared {removed} cached AI result(s).")
         return
@@ -231,7 +230,7 @@ def main():
             all_products_with_prices: list[dict] = []
             ai_enabled = openai_key and not args.no_ai
             if ai_enabled:
-                from src.ai_analyzer import _load_cache
+                from appstore_ppp_prices.ai_analyzer import _load_cache
                 if not _load_cache(app_info.name):
                     status("  Loading all product prices for AI context...")
                     for p in all_products:

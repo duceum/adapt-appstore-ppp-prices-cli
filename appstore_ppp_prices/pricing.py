@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from src.countries import Country
+from appstore_ppp_prices.countries import Country
 
 
 @dataclass

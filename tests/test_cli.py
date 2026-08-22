@@ -6,8 +6,8 @@ from unittest.mock import MagicMock, patch
 import httpx
 import pytest
 
-from src.appstore import Product
-from src.cli import (
+from appstore_ppp_prices.appstore import Product
+from appstore_ppp_prices.cli import (
     VALID_CATEGORIES,
     _extract_api_error,
     _positive_float,
@@ -169,12 +169,12 @@ class TestParseCoefficients:
 
 class TestClearCacheFlag:
     def test_clears_cache_and_exits(self, capsys):
-        with patch("src.cli.build_parser") as mock_parser:
+        with patch("appstore_ppp_prices.cli.build_parser") as mock_parser:
             mock_args = MagicMock()
             mock_args.clear_cache = True
             mock_parser.return_value.parse_args.return_value = mock_args
 
-            with patch("src.ai_analyzer.clear_cache", return_value=3) as mock_clear:
+            with patch("appstore_ppp_prices.ai_analyzer.clear_cache", return_value=3) as mock_clear:
                 main()
 
             mock_clear.assert_called_once()
@@ -211,9 +211,9 @@ class TestMainErrorHandling:
 
     def _run_main_with_error(self, error):
         """Helper: run main() where fetch_app_info raises the given error."""
-        with patch("src.cli.build_parser") as mock_parser, \
-             patch("src.cli.load_config") as mock_config, \
-             patch("src.cli.AppStoreConnectClient") as mock_client_cls:
+        with patch("appstore_ppp_prices.cli.build_parser") as mock_parser, \
+             patch("appstore_ppp_prices.cli.load_config") as mock_config, \
+             patch("appstore_ppp_prices.cli.AppStoreConnectClient") as mock_client_cls:
 
             mock_args = MagicMock()
             mock_args.app_id = "123"
@@ -252,9 +252,9 @@ class TestMainErrorHandling:
 
     def test_invalid_p8_key_exits_cleanly(self):
         """Binary/corrupt .p8 file gives clean error, not raw traceback."""
-        with patch("src.cli.build_parser") as mock_parser, \
-             patch("src.cli.load_config") as mock_config, \
-             patch("src.cli.AppStoreConnectClient") as mock_client_cls:
+        with patch("appstore_ppp_prices.cli.build_parser") as mock_parser, \
+             patch("appstore_ppp_prices.cli.load_config") as mock_config, \
+             patch("appstore_ppp_prices.cli.AppStoreConnectClient") as mock_client_cls:
 
             mock_args = MagicMock()
             mock_args.app_id = "123"

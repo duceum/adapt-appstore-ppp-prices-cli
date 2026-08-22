@@ -1,5 +1,5 @@
-from src.countries import Country
-from src.pricing import calculate_target_prices, get_coefficient
+from appstore_ppp_prices.countries import Country
+from appstore_ppp_prices.pricing import calculate_target_prices, get_coefficient
 
 
 def _country(code: str, category: str, coeff: float, gdp: int = 50000) -> Country:

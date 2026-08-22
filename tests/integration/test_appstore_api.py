@@ -7,7 +7,7 @@ Run: python3 -m pytest tests/integration/ -v
 """
 from __future__ import annotations
 
-from src.appstore import AppInfo, AppStoreConnectClient, Product, PricePoint
+from appstore_ppp_prices.appstore import AppInfo, AppStoreConnectClient, Product, PricePoint
 
 
 class TestFetchAppInfo:
