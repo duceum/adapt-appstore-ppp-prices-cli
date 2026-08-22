@@ -200,3 +200,14 @@ class TestMalformedResponses:
         mock_post.return_value = _response(200, ["not", "an", "object"])
         with pytest.raises(LLMError):
             chat_completion("k", MESSAGES)
+
+
+class TestTemplateStaysInSync:
+    def test_env_example_documents_the_real_default_model(self):
+        """Changing DEFAULT_MODEL without updating .env.example would mislead users."""
+        import re
+        from pathlib import Path
+
+        template = Path(__file__).resolve().parent.parent / ".env.example"
+        active = re.findall(r"^LLM_MODEL=(.+)$", template.read_text(encoding="utf-8"), re.M)
+        assert active == [DEFAULT_MODEL]

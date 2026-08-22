@@ -219,6 +219,7 @@ ASC_KEY_ID=你的_key_id
 ASC_ISSUER_ID=你的_issuer_id
 ASC_PRIVATE_KEY_PATH=AuthKey_XXXX.p8
 LLM_API_KEY=sk-你的密钥
+LLM_MODEL=gpt-5.2
 ```
 
 换成你自己的值。`ASC_PRIVATE_KEY_PATH` 是下载的 `.p8` 文件名——只写文件名时，会在 `.env` 同目录下查找。
