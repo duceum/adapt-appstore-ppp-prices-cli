@@ -21,7 +21,8 @@ appstore_ppp_prices/          — the installable package (importable as appstor
   pipeline.py     — Core workflow: find product → AI analysis → calculate → resolve → apply
   pricing.py      — Pure pricing logic: coefficients × US price → target prices
   countries.py    — Country data loader from CSV (GDP, categories, coefficients)
-  ai_analyzer.py  — OpenAI integration, caching, cache clearing, prompt template
+  ai_analyzer.py  — Prompt template, response parsing, caching, cache clearing
+  llm.py          — OpenAI-compatible chat-completions client: retries, timeouts, provider override
   display.py      — Terminal output formatting, dry-run tables
   paths.py        — Config and cache directory resolution
   countries.csv   — 175+ countries with GDP per capita and default coefficients (shipped as package data)
@@ -40,6 +41,7 @@ wheel that resolves to `site-packages`, not the repository. Data files go throug
 - **API client is stateful**: `AppStoreConnectClient` manages JWT token lifecycle with thread-safe locking
 - **Context manager**: `AppStoreConnectClient` supports `with client:` pattern
 - **Concurrent API calls**: `ThreadPoolExecutor` for equalizations and subscription price setting
+- **No vendor SDK**: the LLM call is a plain httpx POST in `llm.py`, so any OpenAI-compatible endpoint works (OpenRouter, Groq, Ollama, vLLM) and nothing in the dependency tree needs compiling. Retries live there — 429/5xx/timeouts, three attempts, 1s then 2s backoff; 4xx fails immediately
 - **AI caching**: Results cached in `~/.cache/ppp-pricing/` (`$XDG_CACHE_HOME` honoured) by SHA-256 hash of app name; `--clear-cache` removes all cached results
 - **Config discovery**: `--config` → `$PPP_PRICING_CONFIG` → nearest ancestor of cwd holding a `.env` → `~/.config/ppp-pricing/`. The first two are authoritative: a wrong explicit path fails loudly instead of silently falling back. `load_dotenv` is only ever called with an explicit path — never with `None`, which would make python-dotenv search upwards and override the chosen directory
 - **IAP vs Subscription**: Different API endpoints and flows — IAPs use single atomic request, subscriptions need per-territory POST + pending price cleanup
@@ -48,7 +50,7 @@ wheel that resolves to `site-packages`, not the repository. Data files go throug
 
 ```bash
 pip install -e .
-pytest                    # unit tests (139 tests)
+pytest                    # unit tests (164 tests)
 pytest tests/integration  # integration tests (need real API keys)
 ppp-pricing --app-id ID --iap PRODUCT_ID --dry-run
 ppp-pricing --app-id ID --iap PRODUCT_ID --preserved --start-date 2026-08-01  # subscriptions only
@@ -94,7 +96,7 @@ Optional:
 |------|-------|
 | Pricing logic | `appstore_ppp_prices/pricing.py`, `appstore_ppp_prices/countries.py` |
 | API integration | `appstore_ppp_prices/appstore.py` |
-| AI analysis | `appstore_ppp_prices/ai_analyzer.py` |
+| AI analysis | `appstore_ppp_prices/ai_analyzer.py`, `appstore_ppp_prices/llm.py` |
 | CLI / orchestration | `appstore_ppp_prices/cli.py`, `appstore_ppp_prices/pipeline.py` |
 | Output formatting | `appstore_ppp_prices/display.py` |
 | Country data | `appstore_ppp_prices/countries.csv`, `appstore_ppp_prices/countries.py` |

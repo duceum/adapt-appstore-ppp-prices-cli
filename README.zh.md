@@ -3,7 +3,7 @@
 ![PyPI](https://img.shields.io/pypi/v/appstore-ppp-prices)
 ![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
-![Tests](https://img.shields.io/badge/tests-141%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-164%20passing-brightgreen)
 
 **appstore-ppp-prices** 是一个免费开源的命令行工具，按**购买力平价（PPP）**批量更新 **175+ 个国家**的 App Store 应用内购买（IAP）与订阅价格。它读取基于人均 GDP 的系数，可选地用 GPT 针对你的应用类型微调，然后通过 **App Store Connect API** 直接写入价格——一条命令，取代在各个区域里点上一下午。
 
