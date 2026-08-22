@@ -20,51 +20,50 @@ Typical use cases: raising App Store revenue in emerging markets (India, Brazil,
 
 ## Requirements
 
-- **Python 3.10** or newer
 - **App Store Connect** account with pricing permissions
 - (Optional) **OpenAI** API key for AI analysis
+- **Python 3.10** or newer — not needed if you install with `uv`, which brings its own
 
 ## Step-by-Step Setup
 
-### Step 1: Install Python
+### Step 1: Install the Tool
 
-If Python is not installed yet:
+The easiest way is [uv](https://docs.astral.sh/uv/), which needs no Python of your own — it brings its own:
 
-- **macOS**: open Terminal and run:
-  ```
-  brew install python
-  ```
-  No Homebrew? Download Python from https://www.python.org/downloads/
+```
+uv tool install appstore-ppp-prices
+```
 
-- **Windows**: download the installer from https://www.python.org/downloads/ and check **"Add Python to PATH"** during installation
+No uv yet? Install it first with `curl -LsSf https://astral.sh/uv/install.sh | sh` (macOS, Linux) or `powershell -c "irm https://astral.sh/uv/install.ps1 | iex"` (Windows).
+
+Already have Python 3.10+? Either of these works too:
+
+```
+pipx install appstore-ppp-prices
+pip install appstore-ppp-prices
+```
+
+This installs two names for the same tool: `appstore-ppp-prices` and the shorter `ppp-pricing`. The rest of this README uses the short one.
 
 Verify:
 ```
-python3 --version
+ppp-pricing --help
 ```
-Should show `Python 3.10` or higher.
 
-### Step 2: Download the Project
+To try it without installing anything at all: `uvx appstore-ppp-prices --help`
 
-Open a terminal and run:
+<details>
+<summary>Running from source instead</summary>
+
 ```
 git clone https://github.com/duceum/appstore-ppp-pricing-agent-skill.git
 cd appstore-ppp-pricing-agent-skill
-```
-
-No `git` installed? Get it with `brew install git` (macOS) or from https://git-scm.com/downloads (Windows).
-
-Prefer not to use git? Download the ZIP instead: https://github.com/duceum/appstore-ppp-pricing-agent-skill/archive/refs/heads/main.zip — unzip it, then `cd` into the unzipped folder.
-
-### Step 3: Install Dependencies
-
-```
 pip install -e .
 ```
 
-This installs all required libraries automatically.
+</details>
 
-### Step 4: Create an App Store Connect API Key
+### Step 2: Create an App Store Connect API Key
 
 1. Go to https://appstoreconnect.apple.com/access/integrations/api
 2. Click **"Generate API Key"**
@@ -75,9 +74,13 @@ This installs all required libraries automatically.
 7. **Copy the Issuer ID** (UUID shown at the top of the page)
 8. **Download the .p8 file** — this is your private key. You can only download it once!
 
-Place the `.p8` file in the project folder.
+Put the `.p8` file in your config folder:
+```
+mkdir -p ~/.config/ppp-pricing
+mv ~/Downloads/AuthKey_*.p8 ~/.config/ppp-pricing/
+```
 
-### Step 5: (Optional) Get an OpenAI API Key
+### Step 3: (Optional) Get an OpenAI API Key
 
 If you want AI-driven coefficient analysis for better pricing:
 
@@ -85,16 +88,15 @@ If you want AI-driven coefficient analysis for better pricing:
 2. Click **"Create new secret key"**
 3. Copy the key (starts with `sk-...`)
 
-### Step 6: Create the .env Config File
+### Step 4: Create the .env Config File
 
-Create a `.env` file in the project folder (note the dot at the beginning).
+Create a `.env` file next to the key, at `~/.config/ppp-pricing/.env` (note the dot at the beginning of the file name):
 
-You can copy the template:
 ```
-cp .env.example .env
+nano ~/.config/ppp-pricing/.env
 ```
 
-Open `.env` in any text editor and fill in your values:
+Fill in your values:
 ```
 ASC_KEY_ID=your_key_id
 ASC_ISSUER_ID=your_issuer_id
@@ -102,9 +104,11 @@ ASC_PRIVATE_KEY_PATH=AuthKey_XXXX.p8
 OPENAI_API_KEY=sk-your-key
 ```
 
-Replace with your actual values. `ASC_PRIVATE_KEY_PATH` is the name of the downloaded `.p8` file.
+Replace with your actual values. `ASC_PRIVATE_KEY_PATH` is the name of the downloaded `.p8` file — a bare name is resolved next to the `.env`.
 
-### Step 7: Verify the Installation
+Prefer to keep the config elsewhere? Point at it with `--config /path/to/dir`, set `PPP_PRICING_CONFIG`, or just run the tool from a directory that has a `.env` in it.
+
+### Step 5: Verify the Installation
 
 Run the command with your App ID (9-digit number from App Store Connect):
 ```
@@ -193,9 +197,9 @@ Countries are divided into 6 categories by GDP per capita:
 | Problem | Solution |
 |---------|----------|
 | `Error: Missing App Store Connect credentials` | Check your `.env` file — all 3 variables (ASC_KEY_ID, ASC_ISSUER_ID, ASC_PRIVATE_KEY_PATH) must be set |
-| `Error: Private key not found` | Make sure the `.p8` file is in the project folder and the name in `.env` matches |
+| `Error: Private key not found` | Make sure the `.p8` file sits next to your `.env` and the name in `.env` matches |
 | `Error: Could not fetch US price` | Ensure the product has a US price set in App Store Connect |
-| `command not found: ppp-pricing` | Run `pip install -e .` again |
+| `command not found: appstore-ppp-prices` | Reinstall with `uv tool install appstore-ppp-prices`, or open a new terminal so `PATH` is picked up |
 | `Error: No USD price points available` | The product has no available price tiers. Check settings in App Store Connect |
 
 ## Running Tests
