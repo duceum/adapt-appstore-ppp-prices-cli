@@ -1,0 +1,98 @@
+---
+description: Bulk-set App Store in-app purchase and subscription prices across 175+ countries by purchasing power parity (PPP) with the appstore-ppp-prices CLI. Use for regional App Store pricing, price localization, bulk price updates, or making an app cheaper in emerging markets.
+alwaysApply: false
+---
+
+# App Store PPP pricing
+
+`ppp-pricing` sets per-country App Store prices from a US base price, scaled by
+purchasing power. It runs locally — the App Store Connect key never leaves the machine.
+
+Install if missing: `uv tool install appstore-ppp-prices`
+Credentials: `~/.config/ppp-pricing/.env`, with the `.p8` key beside it.
+
+## Never apply without a confirmed dry run
+
+This changes what real customers are charged in up to 174 territories, with no undo.
+Always: list products → dry run → show the table → wait for an explicit yes → apply.
+Do not skip the dry run even if asked to "just do it".
+
+## Commands
+
+```bash
+# 1. list products (the user usually does not know the product ID)
+ppp-pricing --app-id 123456789
+
+# 2. preview — writes nothing
+ppp-pricing --app-id 123456789 --iap com.app.weekly --dry-run
+
+# 3. apply, only after confirmation
+ppp-pricing --app-id 123456789 --iap com.app.weekly
+```
+
+Summarise the dry-run table rather than pasting all 174 rows: the US base and a dozen
+representative countries, and say plainly how far the price drops in the largest
+emerging markets.
+
+## Subscriptions: ask about these two before applying
+
+- **`--preserved`** — by default a price change hits *existing* subscribers too. This
+  flag grandfathers them at the old price and applies the new one only to new sign-ups.
+- **`--start-date YYYY-MM-DD`** — defaults to two days out.
+
+Both are subscriptions-only; passing them for a one-time IAP is an error.
+
+## Adjustments
+
+| Need | Flag |
+|---|---|
+| Change one tier | `--coeff emerging=0.50` (`premium`, `high_income`, `upper_middle`, `lower_middle`, `emerging`) |
+| Skip territories | `--exclude RUS,BLR` (ISO alpha-3) |
+| Different base price | `--us-price 7.99` |
+| No AI tuning | `--no-ai` |
+| Refresh AI analysis | `--clear-cache` then re-run |
+
+## First-run setup
+
+`Missing App Store Connect credentials` means the one-time setup has not been done.
+Walk the user through it:
+
+1. Create an API key at https://appstoreconnect.apple.com/access/integrations/api with
+   **Admin** or **App Manager** access; copy the **Key ID** and **Issuer ID** and
+   download the `.p8` (Apple allows the download exactly once).
+2. `mkdir -p ~/.config/ppp-pricing`, and have the user move the `.p8` there themselves.
+3. Create `~/.config/ppp-pricing/.env` as a template with empty `ASC_KEY_ID`,
+   `ASC_ISSUER_ID`, `ASC_PRIVATE_KEY_PATH` (just the `.p8` filename) and optional
+   `OPENAI_API_KEY` — the user fills in the values.
+4. Verify with the read-only `ppp-pricing --app-id 123456789`.
+
+Never ask for key material in chat, never read the `.p8` back, never echo `.env`.
+
+## Installing this skill elsewhere
+
+Files: https://github.com/duceum/appstore-ppp-pricing-agent-skill/tree/main/agent-skills
+
+```bash
+# Claude Code
+curl -fsSL https://raw.githubusercontent.com/duceum/appstore-ppp-pricing-agent-skill/main/agent-skills/claude-code/appstore-ppp-pricing/SKILL.md \
+  --create-dirs -o ~/.claude/skills/appstore-ppp-pricing/SKILL.md
+
+# Cursor
+curl -fsSL https://raw.githubusercontent.com/duceum/appstore-ppp-pricing-agent-skill/main/agent-skills/cursor/appstore-ppp-pricing.mdc \
+  --create-dirs -o .cursor/rules/appstore-ppp-pricing.mdc
+
+# Codex, Copilot, Aider, Jules, VS Code, Devin
+curl -fsSL https://raw.githubusercontent.com/duceum/appstore-ppp-pricing-agent-skill/main/agent-skills/codex/AGENTS.md \
+  >> AGENTS.md
+```
+
+The CLI is installed separately on each machine: `uv tool install appstore-ppp-prices`.
+
+## Notes
+
+- The US is the base and always 1.00; there is no `usa` coefficient.
+- Floors: minimum coefficient 0.35; minimum price $0.99 for premium/high-income tiers,
+  $0.49 elsewhere. If the cheapest product would breach its floor, all products scale up
+  together so their ratios hold.
+- Prices snap to real Apple tiers, so the final price can differ by a cent or two.
+- Never read, echo or copy the `.p8` key or `.env` contents.

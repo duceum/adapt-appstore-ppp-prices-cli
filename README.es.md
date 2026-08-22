@@ -77,6 +77,18 @@ ppp-pricing --app-id 123456789 --iap com.app.weekly --dry-run
 ppp-pricing --app-id 123456789 --iap com.app.weekly --exclude RUS,BLR
 ```
 
+### Skills listas para usar
+
+Las instrucciones listas para los principales agentes de código están en [`agent-skills/`](agent-skills/):
+
+| Agente | Archivo | Dónde instalarlo |
+|---|---|---|
+| Claude Code | `SKILL.md` | `~/.claude/skills/appstore-ppp-pricing/` |
+| Cursor | regla `.mdc` | `.cursor/rules/` |
+| Codex, Copilot, Aider, Jules, VS Code, Devin | `AGENTS.md` | raíz del repositorio |
+
+Le enseñan al agente lo que `--help` no cuenta: aplicar es irreversible y exige un `--dry-run` confirmado antes, y un cambio de precio de suscripción afecta a los suscriptores **actuales** salvo que se pase `--preserved`. Los comandos de instalación están en [agent-skills/README.md](agent-skills/README.md).
+
 ## Tu clave de API nunca sale de tu máquina
 
 Una clave de App Store Connect con permisos de precios puede cambiar cuánto pagan tus clientes. Los servicios de precios alojados en la nube te piden subir esa clave a sus servidores.

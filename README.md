@@ -77,6 +77,18 @@ ppp-pricing --app-id 123456789 --iap com.app.weekly --dry-run
 ppp-pricing --app-id 123456789 --iap com.app.weekly --exclude RUS,BLR
 ```
 
+### Ready-made skills
+
+Drop-in instructions for the main coding agents live in [`agent-skills/`](agent-skills/):
+
+| Agent | File | Install into |
+|---|---|---|
+| Claude Code | `SKILL.md` | `~/.claude/skills/appstore-ppp-pricing/` |
+| Cursor | `.mdc` rule | `.cursor/rules/` |
+| Codex, Copilot, Aider, Jules, VS Code, Devin | `AGENTS.md` | repository root |
+
+They teach the agent the two things `--help` cannot: that applying is irreversible and needs a confirmed `--dry-run` first, and that a subscription price change hits **existing** subscribers unless `--preserved` is passed. Install commands are in [agent-skills/README.md](agent-skills/README.md).
+
 ## Your API Key Never Leaves Your Machine
 
 An App Store Connect key with pricing permissions can change what your customers are charged. Hosted pricing services need you to upload that key to their servers.
