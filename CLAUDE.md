@@ -2,7 +2,7 @@
 
 ## What This Project Does
 
-CLI tool that automates regional pricing for App Store in-app purchases and subscriptions. Calculates optimal prices for 175+ countries based on GDP per capita and optionally uses GPT to adjust coefficients per app type.
+CLI tool that automates regional pricing for App Store in-app purchases and subscriptions. Distributed on PyPI as `appstore-ppp-prices`; the module is `appstore_ppp_prices` and it installs two equivalent commands, `appstore-ppp-prices` and the shorter `ppp-pricing`. Calculates optimal prices for 175+ countries based on GDP per capita and optionally uses GPT to adjust coefficients per app type.
 
 ## Tech Stack
 
@@ -15,7 +15,7 @@ CLI tool that automates regional pricing for App Store in-app purchases and subs
 ## Architecture
 
 ```
-src/
+appstore_ppp_prices/          — the installable package (importable as appstore_ppp_prices)
   cli.py          — Entry point, argument parsing, orchestration
   appstore.py     — App Store Connect API client (JWT auth, products, prices)
   pipeline.py     — Core workflow: find product → AI analysis → calculate → resolve → apply
@@ -23,11 +23,16 @@ src/
   countries.py    — Country data loader from CSV (GDP, categories, coefficients)
   ai_analyzer.py  — OpenAI integration, caching, cache clearing, prompt template
   display.py      — Terminal output formatting, dry-run tables
+  paths.py        — Config and cache directory resolution
+  countries.csv   — 175+ countries with GDP per capita and default coefficients (shipped as package data)
 
-countries.csv     — 175+ countries with GDP per capita and default coefficients
 .env              — Secrets (not committed)
 .env.example      — Template for .env
 ```
+
+**Never anchor runtime paths to `Path(__file__).parent.parent`** — in an installed
+wheel that resolves to `site-packages`, not the repository. Data files go through
+`importlib.resources`; writable state goes through `paths.py`.
 
 ## Key Patterns
 
@@ -35,18 +40,19 @@ countries.csv     — 175+ countries with GDP per capita and default coefficient
 - **API client is stateful**: `AppStoreConnectClient` manages JWT token lifecycle with thread-safe locking
 - **Context manager**: `AppStoreConnectClient` supports `with client:` pattern
 - **Concurrent API calls**: `ThreadPoolExecutor` for equalizations and subscription price setting
-- **AI caching**: Results cached in `.ai_cache/` by SHA-256 hash of app name; `--clear-cache` removes all cached results
+- **AI caching**: Results cached in `~/.cache/ppp-pricing/` (`$XDG_CACHE_HOME` honoured) by SHA-256 hash of app name; `--clear-cache` removes all cached results
+- **Config discovery**: `--config` → `$PPP_PRICING_CONFIG` → nearest ancestor of cwd holding a `.env` → `~/.config/ppp-pricing/`. The first two are authoritative: a wrong explicit path fails loudly instead of silently falling back. `load_dotenv` is only ever called with an explicit path — never with `None`, which would make python-dotenv search upwards and override the chosen directory
 - **IAP vs Subscription**: Different API endpoints and flows — IAPs use single atomic request, subscriptions need per-territory POST + pending price cleanup
 
 ## How to Run
 
 ```bash
 pip install -e .
-pytest                    # unit tests (114 tests)
+pytest                    # unit tests (139 tests)
 pytest tests/integration  # integration tests (need real API keys)
-adapt-prices-bot --app-id ID --iap PRODUCT_ID --dry-run
-adapt-prices-bot --app-id ID --iap PRODUCT_ID --preserved --start-date 2026-08-01  # subscriptions only
-adapt-prices-bot --clear-cache            # clear AI analysis cache
+ppp-pricing --app-id ID --iap PRODUCT_ID --dry-run
+ppp-pricing --app-id ID --iap PRODUCT_ID --preserved --start-date 2026-08-01  # subscriptions only
+ppp-pricing --clear-cache            # clear AI analysis cache
 ```
 
 ## Environment Variables
@@ -59,6 +65,8 @@ Required:
 Optional:
 - `OPENAI_API_KEY` — Enables AI pricing analysis (GPT-5.2)
 - `ASC_REQUEST_TIMEOUT` — API timeout in seconds (default: 30)
+- `PPP_PRICING_CONFIG` — Directory holding `.env` and the `.p8` key (same role as `--config`)
+- `XDG_CONFIG_HOME` / `XDG_CACHE_HOME` — Standard overrides for the config and cache directories
 
 ## Important Notes
 
@@ -81,9 +89,10 @@ Optional:
 
 | Task | Files |
 |------|-------|
-| Pricing logic | `src/pricing.py`, `src/countries.py` |
-| API integration | `src/appstore.py` |
-| AI analysis | `src/ai_analyzer.py` |
-| CLI / orchestration | `src/cli.py`, `src/pipeline.py` |
-| Output formatting | `src/display.py` |
-| Country data | `countries.csv`, `src/countries.py` |
+| Pricing logic | `appstore_ppp_prices/pricing.py`, `appstore_ppp_prices/countries.py` |
+| API integration | `appstore_ppp_prices/appstore.py` |
+| AI analysis | `appstore_ppp_prices/ai_analyzer.py` |
+| CLI / orchestration | `appstore_ppp_prices/cli.py`, `appstore_ppp_prices/pipeline.py` |
+| Output formatting | `appstore_ppp_prices/display.py` |
+| Country data | `appstore_ppp_prices/countries.csv`, `appstore_ppp_prices/countries.py` |
+| Packaging / install paths | `pyproject.toml`, `appstore_ppp_prices/paths.py` |

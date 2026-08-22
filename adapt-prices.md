@@ -159,7 +159,7 @@ IMPORTANT: Return ONLY valid JSON, no additional text or markdown formatting.
 
 ## Data Files
 
-- `countries.csv` — 175+ countries with GDP, categories, default coefficients
+- `appstore_ppp_prices/countries.csv` — 175+ countries with GDP, categories, default coefficients
 - Source: IMF World Economic Outlook 2025 estimates
 
 ## Key Design Decisions

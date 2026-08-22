@@ -108,7 +108,7 @@ Replace with your actual values. `ASC_PRIVATE_KEY_PATH` is the name of the downl
 
 Run the command with your App ID (9-digit number from App Store Connect):
 ```
-adapt-prices-bot --app-id 123456789
+ppp-pricing --app-id 123456789
 ```
 
 If everything is configured correctly, you'll see a list of all IAPs and subscriptions for your app.
@@ -117,19 +117,19 @@ If everything is configured correctly, you'll see a list of all IAPs and subscri
 
 ### List all products
 ```
-adapt-prices-bot --app-id 123456789
+ppp-pricing --app-id 123456789
 ```
 
 ### Preview prices (without applying)
 ```
-adapt-prices-bot --app-id 123456789 --iap com.app.weekly --dry-run
+ppp-pricing --app-id 123456789 --iap com.app.weekly --dry-run
 ```
 
 Shows a table of calculated prices per country. Nothing changes in App Store.
 
 ### Apply prices
 ```
-adapt-prices-bot --app-id 123456789 --iap com.app.weekly
+ppp-pricing --app-id 123456789 --iap com.app.weekly
 ```
 
 **Warning**: this command will actually change prices in App Store Connect!
@@ -152,27 +152,27 @@ adapt-prices-bot --app-id 123456789 --iap com.app.weekly
 
 Preview prices with AI analysis:
 ```
-adapt-prices-bot --app-id 123456789 --iap com.app.weekly --dry-run
+ppp-pricing --app-id 123456789 --iap com.app.weekly --dry-run
 ```
 
 Preview prices without AI:
 ```
-adapt-prices-bot --app-id 123456789 --iap com.app.weekly --dry-run --no-ai
+ppp-pricing --app-id 123456789 --iap com.app.weekly --dry-run --no-ai
 ```
 
 Apply prices, excluding Russia and Belarus:
 ```
-adapt-prices-bot --app-id 123456789 --iap com.app.weekly --exclude RUS,BLR
+ppp-pricing --app-id 123456789 --iap com.app.weekly --exclude RUS,BLR
 ```
 
 Override the coefficient for emerging markets:
 ```
-adapt-prices-bot --app-id 123456789 --iap com.app.weekly --coeff emerging=0.50 --dry-run
+ppp-pricing --app-id 123456789 --iap com.app.weekly --coeff emerging=0.50 --dry-run
 ```
 
 Clear cached AI analysis results:
 ```
-adapt-prices-bot --clear-cache
+ppp-pricing --clear-cache
 ```
 
 ## Country Categories
@@ -195,7 +195,7 @@ Countries are divided into 6 categories by GDP per capita:
 | `Error: Missing App Store Connect credentials` | Check your `.env` file — all 3 variables (ASC_KEY_ID, ASC_ISSUER_ID, ASC_PRIVATE_KEY_PATH) must be set |
 | `Error: Private key not found` | Make sure the `.p8` file is in the project folder and the name in `.env` matches |
 | `Error: Could not fetch US price` | Ensure the product has a US price set in App Store Connect |
-| `command not found: adapt-prices-bot` | Run `pip install -e .` again |
+| `command not found: ppp-pricing` | Run `pip install -e .` again |
 | `Error: No USD price points available` | The product has no available price tiers. Check settings in App Store Connect |
 
 ## Running Tests

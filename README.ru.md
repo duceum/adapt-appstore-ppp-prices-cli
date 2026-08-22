@@ -102,7 +102,7 @@ OPENAI_API_KEY=sk-ваш-ключ
 
 Запустите команду со своим App ID (9-значный номер из App Store Connect):
 ```
-adapt-prices-bot --app-id 123456789
+ppp-pricing --app-id 123456789
 ```
 
 Если всё настроено верно, вы увидите список всех IAP и подписок вашего приложения.
@@ -111,19 +111,19 @@ adapt-prices-bot --app-id 123456789
 
 ### Посмотреть все продукты приложения
 ```
-adapt-prices-bot --app-id 123456789
+ppp-pricing --app-id 123456789
 ```
 
 ### Предварительный просмотр цен (без применения)
 ```
-adapt-prices-bot --app-id 123456789 --iap com.app.weekly --dry-run
+ppp-pricing --app-id 123456789 --iap com.app.weekly --dry-run
 ```
 
 Покажет таблицу рассчитанных цен для каждой страны. Ничего не изменится в App Store.
 
 ### Применить цены
 ```
-adapt-prices-bot --app-id 123456789 --iap com.app.weekly
+ppp-pricing --app-id 123456789 --iap com.app.weekly
 ```
 
 **Внимание**: эта команда реально изменит цены в App Store Connect!
@@ -146,27 +146,27 @@ adapt-prices-bot --app-id 123456789 --iap com.app.weekly
 
 Посмотреть цены с AI-анализом:
 ```
-adapt-prices-bot --app-id 123456789 --iap com.app.weekly --dry-run
+ppp-pricing --app-id 123456789 --iap com.app.weekly --dry-run
 ```
 
 Посмотреть цены без AI:
 ```
-adapt-prices-bot --app-id 123456789 --iap com.app.weekly --dry-run --no-ai
+ppp-pricing --app-id 123456789 --iap com.app.weekly --dry-run --no-ai
 ```
 
 Применить цены, исключив Россию и Беларусь:
 ```
-adapt-prices-bot --app-id 123456789 --iap com.app.weekly --exclude RUS,BLR
+ppp-pricing --app-id 123456789 --iap com.app.weekly --exclude RUS,BLR
 ```
 
 Переопределить коэффициент для развивающихся стран:
 ```
-adapt-prices-bot --app-id 123456789 --iap com.app.weekly --coeff emerging=0.50 --dry-run
+ppp-pricing --app-id 123456789 --iap com.app.weekly --coeff emerging=0.50 --dry-run
 ```
 
 Очистить кеш AI-анализа:
 ```
-adapt-prices-bot --clear-cache
+ppp-pricing --clear-cache
 ```
 
 ## Категории стран
@@ -189,7 +189,7 @@ adapt-prices-bot --clear-cache
 | `Error: Missing App Store Connect credentials` | Проверьте файл `.env` — все 3 переменные (ASC_KEY_ID, ASC_ISSUER_ID, ASC_PRIVATE_KEY_PATH) должны быть заполнены |
 | `Error: Private key not found` | Проверьте, что `.p8` файл лежит в папке проекта и имя в `.env` совпадает |
 | `Error: Could not fetch US price` | Убедитесь, что у продукта установлена цена в США в App Store Connect |
-| `command not found: adapt-prices-bot` | Выполните `pip install -e .` ещё раз |
+| `command not found: ppp-pricing` | Выполните `pip install -e .` ещё раз |
 | `Error: No USD price points available` | У продукта нет доступных ценовых уровней. Проверьте настройки в App Store Connect |
 
 ## Запуск тестов
