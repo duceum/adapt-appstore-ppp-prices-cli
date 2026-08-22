@@ -48,13 +48,13 @@ Should show `Python 3.10` or higher.
 
 Open a terminal and run:
 ```
-git clone https://github.com/duceum/adapt-appstore-ppp-prices-cli.git
-cd adapt-appstore-prices-cli
+git clone https://github.com/duceum/appstore-ppp-pricing-agent-skill.git
+cd appstore-ppp-pricing-agent-skill
 ```
 
 No `git` installed? Get it with `brew install git` (macOS) or from https://git-scm.com/downloads (Windows).
 
-Prefer not to use git? Download the ZIP instead: https://github.com/duceum/adapt-appstore-ppp-prices-cli/archive/refs/heads/main.zip — unzip it, then `cd` into the unzipped folder.
+Prefer not to use git? Download the ZIP instead: https://github.com/duceum/appstore-ppp-pricing-agent-skill/archive/refs/heads/main.zip — unzip it, then `cd` into the unzipped folder.
 
 ### Step 3: Install Dependencies
 

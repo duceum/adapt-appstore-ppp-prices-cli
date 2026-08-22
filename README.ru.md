@@ -42,13 +42,13 @@ python3 --version
 
 Откройте терминал и выполните:
 ```
-git clone https://github.com/duceum/adapt-appstore-ppp-prices-cli.git
-cd adapt-appstore-prices-cli
+git clone https://github.com/duceum/appstore-ppp-pricing-agent-skill.git
+cd appstore-ppp-pricing-agent-skill
 ```
 
 Нет `git`? Установите его командой `brew install git` (macOS) или скачайте с https://git-scm.com/downloads (Windows).
 
-Не хотите возиться с git? Скачайте архив: https://github.com/duceum/adapt-appstore-ppp-prices-cli/archive/refs/heads/main.zip — распакуйте его и перейдите в распакованную папку командой `cd`.
+Не хотите возиться с git? Скачайте архив: https://github.com/duceum/appstore-ppp-pricing-agent-skill/archive/refs/heads/main.zip — распакуйте его и перейдите в распакованную папку командой `cd`.
 
 ### Шаг 3: Установить зависимости
 
