@@ -12,6 +12,7 @@ import httpx
 
 from appstore_ppp_prices.appstore import AppStoreConnectClient, Product
 from appstore_ppp_prices.display import status, find_closest_price_point, list_products, print_dry_run_table
+from appstore_ppp_prices.paths import CONFIG_ENV_VAR, resolve_config_dir, user_config_dir
 from appstore_ppp_prices.pipeline import (
     apply_prices,
     calculate_targets,
@@ -117,8 +118,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--start-date", type=_future_date, metavar="YYYY-MM-DD",
                         help="Date the new prices take effect (subscriptions only; default: 2 days from now)")
     parser.add_argument("--clear-cache", action="store_true", help="Delete all cached AI analysis results and exit")
-    project_root = str(Path(__file__).resolve().parent.parent)
-    parser.add_argument("--config", type=str, default=project_root, help="Config directory with .env and .p8 key")
+    parser.add_argument("--config", type=str, default=None,
+                        help="Directory holding .env and the .p8 key "
+                             "(default: $PPP_PRICING_CONFIG, then the current directory, then ~/.config/ppp-pricing)")
     return parser
 
 
@@ -133,7 +135,8 @@ def validate_subscription_flags(product: Product, preserved: bool, start_date: d
 def load_config(config_dir: Path) -> tuple[str, str, Path, str | None]:
     """Load .env and validate App Store Connect credentials."""
     env_path = config_dir / ".env"
-    load_dotenv(env_path if env_path.exists() else None)
+    if env_path.exists():
+        load_dotenv(env_path)
 
     key_id = os.getenv("ASC_KEY_ID")
     issuer_id = os.getenv("ASC_ISSUER_ID")
@@ -144,6 +147,7 @@ def load_config(config_dir: Path) -> tuple[str, str, Path, str | None]:
         print("Error: Missing App Store Connect credentials.")
         print("Set ASC_KEY_ID, ASC_ISSUER_ID, ASC_PRIVATE_KEY_PATH in .env")
         print(f"Looked in: {env_path}")
+        print(f"Use --config DIR, set ${CONFIG_ENV_VAR}, or put .env in {user_config_dir()}")
         sys.exit(1)
 
     pk_path = Path(pk_path_str)
@@ -184,7 +188,7 @@ def main():
     if not args.app_id:
         build_parser().error("the following arguments are required: --app-id")
 
-    config_dir = Path(args.config).expanduser().resolve()
+    config_dir = resolve_config_dir(args.config)
     key_id, issuer_id, pk_path, openai_key = load_config(config_dir)
     try:
         client = AppStoreConnectClient(key_id, issuer_id, pk_path)
