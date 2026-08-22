@@ -10,6 +10,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import httpx
 
+from appstore_ppp_prices import __version__
 from appstore_ppp_prices.appstore import AppStoreConnectClient, Product
 from appstore_ppp_prices.display import status, find_closest_price_point, list_products, print_dry_run_table
 from appstore_ppp_prices.paths import CONFIG_ENV_VAR, resolve_config_dir, user_config_dir
@@ -118,6 +119,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--start-date", type=_future_date, metavar="YYYY-MM-DD",
                         help="Date the new prices take effect (subscriptions only; default: 2 days from now)")
     parser.add_argument("--clear-cache", action="store_true", help="Delete all cached AI analysis results and exit")
+    parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     parser.add_argument("--config", type=str, default=None,
                         help="Directory holding .env and the .p8 key "
                              "(default: $PPP_PRICING_CONFIG, then the current directory, then ~/.config/ppp-pricing)")
