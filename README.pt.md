@@ -220,6 +220,7 @@ ASC_KEY_ID=seu_key_id
 ASC_ISSUER_ID=seu_issuer_id
 ASC_PRIVATE_KEY_PATH=AuthKey_XXXX.p8
 LLM_API_KEY=sk-sua-chave
+LLM_MODEL=gpt-5.2
 ```
 
 Substitua pelos valores reais. `ASC_PRIVATE_KEY_PATH` é o nome do arquivo `.p8` baixado — um nome simples é resolvido ao lado do `.env`.
