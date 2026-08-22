@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "appstore-ppp-prices"
-version = "0.1.0"
+version = "1.0.0"
 description = "Regional PPP pricing for App Store in-app purchases and subscriptions: GDP-based price localization across 175+ countries via the App Store Connect API"
 readme = "README.md"
 license = { text = "MIT" }
@@ -14,11 +14,14 @@ keywords = [
     "price-localization", "in-app-purchase", "subscriptions", "ios", "monetization",
 ]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Build Tools",
 ]
 requires-python = ">=3.10"

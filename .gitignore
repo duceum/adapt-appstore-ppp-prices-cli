@@ -2,9 +2,6 @@
 .env
 *.p8
 
-# AI cache
-.ai_cache/
-
 # Python
 __pycache__/
 *.py[cod]
