@@ -188,6 +188,24 @@ AI-анализ подстраивает коэффициенты под кон�
 1. Откройте https://platform.openai.com/api-keys
 2. Создайте ключ и скопируйте его (начинается с `sk-`)
 
+<details>
+<summary>Другой провайдер вместо OpenAI</summary>
+
+Запрос — это обычный chat completion в формате OpenAI, поэтому подойдёт всё, что
+понимает этот формат: OpenRouter, Groq, Together, Fireworks, DeepSeek или локальные
+Ollama, LM Studio, vLLM. Переключается двумя переменными в `.env`:
+
+```
+LLM_BASE_URL=https://openrouter.ai/api/v1
+LLM_MODEL=meta-llama/llama-3.3-70b-instruct
+```
+
+`LLM_API_KEY` (или `OPENAI_API_KEY`) тогда содержит ключ этого провайдера. Локальной модели ключ не нужен
+вовсе, но переменную всё равно надо чем-то заполнить. `LLM_REQUEST_TIMEOUT`
+(в секундах, по умолчанию 120) пригодится для медленных локальных моделей.
+
+</details>
+
 ### Шаг 4: Создать файл настроек .env
 
 Создайте файл `.env` рядом с ключом, по пути `~/.config/ppp-pricing/.env` (точка в начале имени обязательна):
@@ -201,7 +219,7 @@ nano ~/.config/ppp-pricing/.env
 ASC_KEY_ID=ваш_key_id
 ASC_ISSUER_ID=ваш_issuer_id
 ASC_PRIVATE_KEY_PATH=AuthKey_XXXX.p8
-OPENAI_API_KEY=sk-ваш-ключ
+LLM_API_KEY=sk-ваш-ключ
 ```
 
 Замените значения на свои. `ASC_PRIVATE_KEY_PATH` — имя скачанного `.p8` файла; если указано просто имя, файл ищется рядом с `.env`.

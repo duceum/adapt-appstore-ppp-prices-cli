@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "appstore-ppp-prices"
-version = "1.0.0"
+version = "1.0.1"
 description = "Regional PPP pricing for App Store in-app purchases and subscriptions: GDP-based price localization across 175+ countries via the App Store Connect API"
 readme = "README.md"
 license = { text = "MIT" }
@@ -28,7 +28,6 @@ requires-python = ">=3.10"
 dependencies = [
     "httpx>=0.27",
     "PyJWT[crypto]>=2.8",
-    "openai>=1.50",
     "python-dotenv>=1.0",
 ]
 

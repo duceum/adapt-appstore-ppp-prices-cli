@@ -64,7 +64,7 @@ Walk the user through it:
 2. `mkdir -p ~/.config/ppp-pricing`, and have the user move the `.p8` there themselves.
 3. Create `~/.config/ppp-pricing/.env` as a template with empty `ASC_KEY_ID`,
    `ASC_ISSUER_ID`, `ASC_PRIVATE_KEY_PATH` (just the `.p8` filename) and optional
-   `OPENAI_API_KEY` — the user fills in the values.
+   `LLM_API_KEY` — the user fills in the values.
 4. Verify with the read-only `ppp-pricing --app-id 123456789`.
 
 Never ask for key material in chat, never read the `.p8` back, never echo `.env`.
