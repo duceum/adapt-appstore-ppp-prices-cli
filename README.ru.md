@@ -19,13 +19,11 @@
 
 ## Установка через ИИ-агента
 
-Вставьте это в **Claude Code**, **Codex**, **Cursor** или любого другого кодинг-агента — он поставит утилиту и проведёт вас через разовую настройку App Store Connect:
+Вставьте это в **Claude Code**, **Codex**, **Cursor** или любого другого кодинг-агента — он сам прочитает страницу, поставит утилиту подходящим для вашей машины способом и проведёт через разовую настройку App Store Connect:
 
 ```text
-Установи мне CLI appstore-ppp-prices: https://github.com/duceum/appstore-ppp-pricing-agent-skill
-Выполни `uv tool install appstore-ppp-prices` (если uv не стоит — сначала поставь его), затем помоги
-создать .env с моим ключом App Store Connect API в той папке настроек, которую ждёт утилита, установи
-скилл из папки agent-skills/ этого репозитория и в конце проверь всё командой `ppp-pricing --version`.
+Поставь мне appstore-ppp-prices: https://github.com/duceum/appstore-ppp-pricing-agent-skill
+Прочитай страницу, выбери подходящий для моей машины способ установки и поставь заодно скилл для агента из этого репозитория.
 ```
 
 Хотите руками? Это две строки — подробности в разделах [macOS](#macos) · [Windows](#windows) · [Linux](#linux):
@@ -106,11 +104,11 @@ ppp-pricing --app-id 123456789 --iap com.app.weekly --exclude RUS,BLR
 
 Готовые инструкции для основных кодинг-агентов лежат в [`agent-skills/`](agent-skills/):
 
-| Агент | Файл | Куда положить |
+| Агент | Файл скилла | Куда положить |
 |---|---|---|
-| Claude Code | `SKILL.md` | `~/.claude/skills/appstore-ppp-pricing/` |
-| Cursor | правило `.mdc` | `.cursor/rules/` |
-| Codex, Copilot, Aider, Jules, VS Code, Devin | `AGENTS.md` | корень репозитория |
+| Claude Code | [`SKILL.md`](agent-skills/claude-code/appstore-ppp-pricing/SKILL.md) | `~/.claude/skills/appstore-ppp-pricing/` |
+| Cursor | [`appstore-ppp-pricing.mdc`](agent-skills/cursor/appstore-ppp-pricing.mdc) | `.cursor/rules/` |
+| Codex, Copilot, Aider, Jules, VS Code, Devin | [`AGENTS.md`](agent-skills/codex/AGENTS.md) | корень репозитория |
 
 Они объясняют агенту то, чего нет в `--help`: применение необратимо и требует подтверждённого `--dry-run`, а изменение цены подписки задевает **действующих** подписчиков, если не передать `--preserved`. Команды установки — в [agent-skills/README.md](agent-skills/README.md).
 

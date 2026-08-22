@@ -19,13 +19,11 @@
 
 ## 用你的 AI 代理来安装
 
-把下面这段粘贴进 **Claude Code**、**Codex**、**Cursor** 或任何编程代理，它会装好工具，并带你走完一次性的 App Store Connect 配置：
+把下面这段粘贴进 **Claude Code**、**Codex**、**Cursor** 或任何编程代理，它会自己读页面、用适合你机器的方式装好工具，并带你走完一次性的 App Store Connect 配置：
 
 ```text
-帮我安装 appstore-ppp-prices 命令行工具：https://github.com/duceum/appstore-ppp-pricing-agent-skill
-执行 `uv tool install appstore-ppp-prices`（如果没有 uv 就先装 uv），然后帮我在这个工具期望的配置目录里
-创建 .env 并填入我的 App Store Connect API 密钥，再安装该仓库 agent-skills/ 目录里的 skill，
-最后用 `ppp-pricing --version` 验证一切正常。
+帮我安装 appstore-ppp-prices：https://github.com/duceum/appstore-ppp-pricing-agent-skill
+读一下这个页面，选一种适合我机器的安装方式，并把该仓库里的 agent skill 也装上。
 ```
 
 想自己动手？两行命令就够了，细节见 [macOS](#macos) · [Windows](#windows) · [Linux](#linux)：
@@ -106,11 +104,11 @@ ppp-pricing --app-id 123456789 --iap com.app.weekly --exclude RUS,BLR
 
 面向主流编程代理的现成指令放在 [`agent-skills/`](agent-skills/)：
 
-| 代理 | 文件 | 安装位置 |
+| 代理 | skill 文件 | 安装位置 |
 |---|---|---|
-| Claude Code | `SKILL.md` | `~/.claude/skills/appstore-ppp-pricing/` |
-| Cursor | `.mdc` 规则 | `.cursor/rules/` |
-| Codex、Copilot、Aider、Jules、VS Code、Devin | `AGENTS.md` | 仓库根目录 |
+| Claude Code | [`SKILL.md`](agent-skills/claude-code/appstore-ppp-pricing/SKILL.md) | `~/.claude/skills/appstore-ppp-pricing/` |
+| Cursor | [`appstore-ppp-pricing.mdc`](agent-skills/cursor/appstore-ppp-pricing.mdc) | `.cursor/rules/` |
+| Codex、Copilot、Aider、Jules、VS Code、Devin | [`AGENTS.md`](agent-skills/codex/AGENTS.md) | 仓库根目录 |
 
 它们告诉代理 `--help` 里没有的两件事：应用价格不可撤销，必须先经过确认过的 `--dry-run`；以及订阅调价默认会影响**现有**订阅用户，除非传入 `--preserved`。安装命令见 [agent-skills/README.md](agent-skills/README.md)。
 

@@ -19,13 +19,11 @@
 
 ## Install It With Your AI Agent
 
-Paste this into **Claude Code**, **Codex**, **Cursor** or any other coding agent. It installs the tool and walks you through the one-time App Store Connect setup:
+Paste this into **Claude Code**, **Codex**, **Cursor** or any other coding agent. It reads the page, installs the tool whichever way suits your machine, and walks you through the one-time App Store Connect setup:
 
 ```text
-Install the appstore-ppp-prices CLI for me: https://github.com/duceum/appstore-ppp-pricing-agent-skill
-Run `uv tool install appstore-ppp-prices` (install uv first if it is missing), then help me create the
-.env with my App Store Connect API key in the config directory the tool expects, install the agent skill
-from the repo's agent-skills/ folder, and finish by verifying with `ppp-pricing --version`.
+Install appstore-ppp-prices for me: https://github.com/duceum/appstore-ppp-pricing-agent-skill
+Read the page, pick whichever install fits my machine, and install the agent skill from that repo too.
 ```
 
 Rather do it by hand? It is two lines — [macOS](#macos) · [Windows](#windows) · [Linux](#linux) have the details:
@@ -106,11 +104,11 @@ ppp-pricing --app-id 123456789 --iap com.app.weekly --exclude RUS,BLR
 
 Drop-in instructions for the main coding agents live in [`agent-skills/`](agent-skills/):
 
-| Agent | File | Install into |
+| Agent | Skill file | Install into |
 |---|---|---|
-| Claude Code | `SKILL.md` | `~/.claude/skills/appstore-ppp-pricing/` |
-| Cursor | `.mdc` rule | `.cursor/rules/` |
-| Codex, Copilot, Aider, Jules, VS Code, Devin | `AGENTS.md` | repository root |
+| Claude Code | [`SKILL.md`](agent-skills/claude-code/appstore-ppp-pricing/SKILL.md) | `~/.claude/skills/appstore-ppp-pricing/` |
+| Cursor | [`appstore-ppp-pricing.mdc`](agent-skills/cursor/appstore-ppp-pricing.mdc) | `.cursor/rules/` |
+| Codex, Copilot, Aider, Jules, VS Code, Devin | [`AGENTS.md`](agent-skills/codex/AGENTS.md) | repository root |
 
 They teach the agent the two things `--help` cannot: that applying is irreversible and needs a confirmed `--dry-run` first, and that a subscription price change hits **existing** subscribers unless `--preserved` is passed. Install commands are in [agent-skills/README.md](agent-skills/README.md).
 

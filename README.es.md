@@ -19,13 +19,11 @@
 
 ## Instálala con tu agente de IA
 
-Pega esto en **Claude Code**, **Codex**, **Cursor** o cualquier otro agente de código. Instala la herramienta y te guía por la configuración inicial de App Store Connect:
+Pega esto en **Claude Code**, **Codex**, **Cursor** o cualquier otro agente de código. Lee la página, instala la herramienta de la forma que encaje con tu máquina y te guía por la configuración inicial de App Store Connect:
 
 ```text
-Instálame la CLI appstore-ppp-prices: https://github.com/duceum/appstore-ppp-pricing-agent-skill
-Ejecuta `uv tool install appstore-ppp-prices` (instala uv antes si no está), luego ayúdame a crear el
-.env con mi clave de App Store Connect API en la carpeta de configuración que espera la herramienta,
-instala la skill de la carpeta agent-skills/ del repo y termina comprobando con `ppp-pricing --version`.
+Instálame appstore-ppp-prices: https://github.com/duceum/appstore-ppp-pricing-agent-skill
+Lee la página, elige la instalación que encaje con mi máquina e instala también la skill de agente de ese repositorio.
 ```
 
 ¿Prefieres hacerlo a mano? Son dos líneas — los detalles están en [macOS](#macos) · [Windows](#windows) · [Linux](#linux):
@@ -106,11 +104,11 @@ ppp-pricing --app-id 123456789 --iap com.app.weekly --exclude RUS,BLR
 
 Las instrucciones listas para los principales agentes de código están en [`agent-skills/`](agent-skills/):
 
-| Agente | Archivo | Dónde instalarlo |
+| Agente | Archivo de la skill | Dónde instalarlo |
 |---|---|---|
-| Claude Code | `SKILL.md` | `~/.claude/skills/appstore-ppp-pricing/` |
-| Cursor | regla `.mdc` | `.cursor/rules/` |
-| Codex, Copilot, Aider, Jules, VS Code, Devin | `AGENTS.md` | raíz del repositorio |
+| Claude Code | [`SKILL.md`](agent-skills/claude-code/appstore-ppp-pricing/SKILL.md) | `~/.claude/skills/appstore-ppp-pricing/` |
+| Cursor | [`appstore-ppp-pricing.mdc`](agent-skills/cursor/appstore-ppp-pricing.mdc) | `.cursor/rules/` |
+| Codex, Copilot, Aider, Jules, VS Code, Devin | [`AGENTS.md`](agent-skills/codex/AGENTS.md) | raíz del repositorio |
 
 Le enseñan al agente lo que `--help` no cuenta: aplicar es irreversible y exige un `--dry-run` confirmado antes, y un cambio de precio de suscripción afecta a los suscriptores **actuales** salvo que se pase `--preserved`. Los comandos de instalación están en [agent-skills/README.md](agent-skills/README.md).
 
