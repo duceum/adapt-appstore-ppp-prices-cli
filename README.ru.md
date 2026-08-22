@@ -77,6 +77,18 @@ ppp-pricing --app-id 123456789 --iap com.app.weekly --dry-run
 ppp-pricing --app-id 123456789 --iap com.app.weekly --exclude RUS,BLR
 ```
 
+### Готовые скиллы
+
+Готовые инструкции для основных кодинг-агентов лежат в [`agent-skills/`](agent-skills/):
+
+| Агент | Файл | Куда положить |
+|---|---|---|
+| Claude Code | `SKILL.md` | `~/.claude/skills/appstore-ppp-pricing/` |
+| Cursor | правило `.mdc` | `.cursor/rules/` |
+| Codex, Copilot, Aider, Jules, VS Code, Devin | `AGENTS.md` | корень репозитория |
+
+Они объясняют агенту то, чего нет в `--help`: применение необратимо и требует подтверждённого `--dry-run`, а изменение цены подписки задевает **действующих** подписчиков, если не передать `--preserved`. Команды установки — в [agent-skills/README.md](agent-skills/README.md).
+
 ## Ключ API не покидает вашу машину
 
 Ключ App Store Connect с правами на цены может изменить то, сколько платят ваши клиенты. Облачные сервисы ценообразования требуют загрузить этот ключ к ним на сервер.

@@ -77,6 +77,18 @@ ppp-pricing --app-id 123456789 --iap com.app.weekly --dry-run
 ppp-pricing --app-id 123456789 --iap com.app.weekly --exclude RUS,BLR
 ```
 
+### 现成的 skill
+
+面向主流编程代理的现成指令放在 [`agent-skills/`](agent-skills/)：
+
+| 代理 | 文件 | 安装位置 |
+|---|---|---|
+| Claude Code | `SKILL.md` | `~/.claude/skills/appstore-ppp-pricing/` |
+| Cursor | `.mdc` 规则 | `.cursor/rules/` |
+| Codex、Copilot、Aider、Jules、VS Code、Devin | `AGENTS.md` | 仓库根目录 |
+
+它们告诉代理 `--help` 里没有的两件事：应用价格不可撤销，必须先经过确认过的 `--dry-run`；以及订阅调价默认会影响**现有**订阅用户，除非传入 `--preserved`。安装命令见 [agent-skills/README.md](agent-skills/README.md)。
+
 ## 你的 API 密钥不会离开本机
 
 拥有定价权限的 App Store Connect 密钥可以改变你的客户实际支付的金额。托管型定价服务需要你把这把密钥上传到它们的服务器。
