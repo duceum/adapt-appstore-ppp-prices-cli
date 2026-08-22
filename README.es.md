@@ -134,6 +134,16 @@ pipx install appstore-ppp-prices
 pip install appstore-ppp-prices
 ```
 
+¿Estás en Mac y prefieres Homebrew?
+
+```
+brew tap duceum/tap
+brew trust duceum/tap
+brew install duceum/tap/appstore-ppp-prices
+```
+
+`brew trust` es Homebrew 6 preguntando si aceptas ejecutar código de fórmula de un tap de terceros. La instalación tarda unos minutos: Homebrew compila las dependencias de Python desde el código fuente, y tres de ellas llevan extensiones nativas. `uv` usa wheels precompilados y termina en segundos.
+
 Esto instala dos nombres para la misma herramienta: `appstore-ppp-prices` y el más corto `ppp-pricing`. El resto de este README usa el corto.
 
 Comprueba:
