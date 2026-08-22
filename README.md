@@ -2,9 +2,9 @@
 
 ![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
-![Tests](https://img.shields.io/badge/tests-127%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-141%20passing-brightgreen)
 
-**Adapt Prices Bot** localizes App Store in-app purchase and subscription prices across **175+ countries** by **purchasing power parity (PPP)**: GDP-per-capita coefficients, optional AI tuning for your app type, and price tiers applied directly through the **App Store Connect API** — one command instead of hours in the App Store Connect UI.
+**appstore-ppp-prices** localizes App Store in-app purchase and subscription prices across **175+ countries** by **purchasing power parity (PPP)**: GDP-per-capita coefficients, optional AI tuning for your app type, and price tiers applied directly through the **App Store Connect API** — one command instead of hours in the App Store Connect UI.
 
 > **[Документация на русском (README.ru.md)](README.ru.md)**
 
@@ -68,7 +68,7 @@ This installs all required libraries automatically.
 
 1. Go to https://appstoreconnect.apple.com/access/integrations/api
 2. Click **"Generate API Key"**
-3. Name: anything (e.g. `adapt-bot`)
+3. Name: anything (e.g. `ppp-pricing`)
 4. Access: **Admin** or **App Manager**
 5. Click **"Generate"**
 6. **Copy the Key ID** (10 characters, e.g. `A1B2C3D4E5`)
