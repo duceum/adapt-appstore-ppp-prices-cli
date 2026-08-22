@@ -10,7 +10,7 @@ import httpx
 from appstore_ppp_prices.ai_analyzer import analyze_app
 from appstore_ppp_prices.appstore import AppStoreConnectClient, Product, PricePoint
 from appstore_ppp_prices.countries import load_countries
-from appstore_ppp_prices.display import status, find_closest_price_point
+from appstore_ppp_prices.display import status, find_price_point
 from appstore_ppp_prices.pricing import TargetPrice, calculate_target_prices
 
 log = logging.getLogger(__name__)
@@ -90,45 +90,41 @@ def resolve_territory_prices(
     client: AppStoreConnectClient,
     product: Product,
     target_prices: list[TargetPrice],
-    usd_points: list[PricePoint],
-) -> dict[str, PricePoint]:
-    """Map target prices to local Apple price points via equalizations."""
-    tier_targets: dict[str, list[TargetPrice]] = {}
-    for target in target_prices:
-        closest = find_closest_price_point(usd_points, target.target_price_usd)
-        if not closest:
-            log.warning("No price tier found for %s (target $%.2f), skipping",
-                        target.country_code, target.target_price_usd)
-            continue
-        tier_targets.setdefault(closest.id, []).append(target)
+    us_point: PricePoint,
+) -> tuple[dict[str, PricePoint], dict[str, PricePoint]]:
+    """Pick a local price point per territory: Apple's own price for the US
+    price, scaled by that country's coefficient.
 
-    status(f"  Targets grouped into {len(tier_targets)} unique price tier(s).")
-    status("  Loading territory equalizations...")
+    The scaling happens in the local currency, not in dollars. Equalizing a
+    USD price point lands on a coarse subset of each territory's grid — CHF 5
+    and CHF 6 with nothing between — so a coefficient applied in dollars
+    arrives distorted. Returns (chosen points, Apple's default points).
+    """
+    status("  Loading Apple's default territory prices...")
+    baselines = client.fetch_all_equalizations(product, us_point.id)
+    if not baselines:
+        print("Error: Could not load Apple's territory prices for the US price.")
+        sys.exit(1)
 
-    tier_eqs: dict[str, dict[str, PricePoint]] = {}
-    with ThreadPoolExecutor(max_workers=5) as pool:
-        eq_futures = {pool.submit(client.fetch_all_equalizations, product, uid): uid for uid in tier_targets}
-        done = 0
-        for future in as_completed(eq_futures):
-            uid = eq_futures[future]
-            try:
-                tier_eqs[uid] = future.result()
-            except (httpx.HTTPStatusError, httpx.TimeoutException, httpx.ConnectError, OSError) as e:
-                log.warning("Failed to load equalizations for tier %s: %s", uid, e)
-                tier_eqs[uid] = {}
-            done += 1
-            status(f"    Tier {done}/{len(tier_targets)} loaded ({len(tier_targets[uid])} target countries)")
+    codes = [t.country_code for t in target_prices]
+    status(f"  Loading local price points for {len(codes)} territories...")
+    grids = client.fetch_territory_price_points(product, codes)
+    status(f"  {sum(len(g) for g in grids.values())} local price points loaded.")
 
     territory_prices: dict[str, PricePoint] = {}
-    for usd_pp_id, targets in tier_targets.items():
-        eq_map = tier_eqs.get(usd_pp_id, {})
-        for target in targets:
-            local_pp = eq_map.get(target.country_code)
-            if local_pp:
-                territory_prices[target.country_code] = local_pp
+    for target in target_prices:
+        base = baselines.get(target.country_code)
+        grid = grids.get(target.country_code)
+        if not base or not grid:
+            log.warning("No local price grid for %s, skipping", target.country_code)
+            continue
+        local_target = base.customer_price * target.coefficient
+        point = find_price_point(grid, local_target, base.customer_price)
+        if point:
+            territory_prices[target.country_code] = point
 
     status(f"  {len(territory_prices)} territory price points resolved.")
-    return territory_prices
+    return territory_prices, baselines
 
 
 def apply_prices(client: AppStoreConnectClient, product: Product, territory_prices: dict[str, PricePoint],

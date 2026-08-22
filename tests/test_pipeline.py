@@ -35,64 +35,81 @@ class TestFindProduct:
 
 
 class TestResolveTerritoryPrices:
-    def _make_target(self, country: str, target_usd: float) -> TargetPrice:
+    def _make_target(self, country: str, coefficient: float) -> TargetPrice:
         return TargetPrice(
             country_code=country, country_name=country,
             product_id="id_w", product_name="weekly",
-            us_price=4.99, coefficient=0.7, target_price_usd=target_usd,
+            us_price=5.99, coefficient=coefficient,
+            target_price_usd=round(5.99 * coefficient, 2),
         )
 
-    def _make_usd_points(self) -> list[PricePoint]:
-        return [
-            PricePoint(id="tier_1", customer_price=0.99, territory_3="USA"),
-            PricePoint(id="tier_5", customer_price=4.99, territory_3="USA"),
-        ]
+    def _us_point(self) -> PricePoint:
+        return PricePoint(id="usd_599", customer_price=5.99, territory_3="USA")
 
-    def test_continues_when_one_tier_fails(self):
-        """If one equalization fetch fails, other tiers still resolve."""
-        product = _product("weekly")
-        targets = [
-            self._make_target("DEU", 4.99),  # maps to tier_5
-            self._make_target("IND", 0.99),  # maps to tier_1
-        ]
-        usd_points = self._make_usd_points()
-
+    def _client(self, baselines: dict, grids: dict) -> MagicMock:
         client = MagicMock()
+        client.fetch_all_equalizations.return_value = baselines
+        client.fetch_territory_price_points.return_value = grids
+        return client
 
-        def mock_eq(prod, uid):
-            if uid == "tier_5":
-                raise ConnectionError("network down")
-            return {"IND": PricePoint(id="ind_pp", customer_price=79.0, territory_3="IND")}
+    def test_scales_the_local_price_by_the_coefficient(self):
+        """A premium country pays its own currency times the coefficient."""
+        client = self._client(
+            baselines={"CHE": PricePoint(id="che_500", customer_price=5.00, territory_3="CHE")},
+            grids={"CHE": [PricePoint(id=f"che_{p}", customer_price=p, territory_3="CHE")
+                           for p in (5.00, 5.10, 5.50, 6.00)]},
+        )
+        targets = [self._make_target("CHE", 1.10)]
 
-        client.fetch_all_equalizations.side_effect = mock_eq
+        result, baselines = resolve_territory_prices(client, _product("weekly"), targets, self._us_point())
 
-        result = resolve_territory_prices(client, product, targets, usd_points)
+        assert result["CHE"].customer_price == 5.50  # 5.00 x 1.10, not the 6.00 an equalized tier gives
+        assert baselines["CHE"].customer_price == 5.00
 
-        assert "IND" in result
-        assert "DEU" not in result
+    def test_rounds_up_for_a_premium_country(self):
+        """No exact point: above the base price it takes the next one up."""
+        client = self._client(
+            baselines={"NOR": PricePoint(id="nor_79", customer_price=79.0, territory_3="NOR")},
+            grids={"NOR": [PricePoint(id=f"nor_{p}", customer_price=p, territory_3="NOR")
+                           for p in (79.0, 86.0, 87.0, 89.0)]},
+        )
+        targets = [self._make_target("NOR", 1.10)]  # 79 x 1.10 = 86.9
 
-    def test_returns_empty_when_all_tiers_fail(self):
-        """If all equalization fetches fail, returns empty dict."""
-        product = _product("weekly")
-        targets = [self._make_target("DEU", 4.99)]
-        usd_points = self._make_usd_points()
+        result, _ = resolve_territory_prices(client, _product("weekly"), targets, self._us_point())
+        assert result["NOR"].customer_price == 87.0
 
-        client = MagicMock()
-        client.fetch_all_equalizations.side_effect = ConnectionError("timeout")
+    def test_rounds_down_for_a_discounted_country(self):
+        client = self._client(
+            baselines={"IND": PricePoint(id="inr_599", customer_price=599.0, territory_3="IND")},
+            grids={"IND": [PricePoint(id=f"inr_{p}", customer_price=p, territory_3="IND")
+                           for p in (199.0, 239.0, 249.0, 599.0)]},
+        )
+        targets = [self._make_target("IND", 0.40)]  # 599 x 0.40 = 239.6
 
-        result = resolve_territory_prices(client, product, targets, usd_points)
+        result, _ = resolve_territory_prices(client, _product("weekly"), targets, self._us_point())
+        assert result["IND"].customer_price == 239.0
 
-        assert result == {}
+    def test_skips_a_territory_without_a_grid(self):
+        """A batch that failed to load must not take the other territories down."""
+        client = self._client(
+            baselines={
+                "CHE": PricePoint(id="che_500", customer_price=5.00, territory_3="CHE"),
+                "NOR": PricePoint(id="nor_79", customer_price=79.0, territory_3="NOR"),
+            },
+            grids={"CHE": [PricePoint(id="che_550", customer_price=5.50, territory_3="CHE")]},
+        )
+        targets = [self._make_target("CHE", 1.10), self._make_target("NOR", 1.10)]
 
-    def test_skips_targets_when_usd_points_empty(self):
-        """Empty usd_points should not crash — targets are skipped gracefully."""
-        product = _product("weekly")
-        targets = [self._make_target("DEU", 4.99)]
-        client = MagicMock()
+        result, _ = resolve_territory_prices(client, _product("weekly"), targets, self._us_point())
+        assert "CHE" in result
+        assert "NOR" not in result
 
-        result = resolve_territory_prices(client, product, targets, [])
-        assert result == {}
-        client.fetch_all_equalizations.assert_not_called()
+    def test_exits_when_apple_defaults_cannot_be_loaded(self):
+        client = self._client(baselines={}, grids={})
+        targets = [self._make_target("CHE", 1.10)]
+
+        with pytest.raises(SystemExit):
+            resolve_territory_prices(client, _product("weekly"), targets, self._us_point())
 
 
 class TestApplyPrices:

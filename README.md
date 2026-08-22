@@ -1,17 +1,36 @@
-# Bulk App Store PPP Price Updates for 175+ Countries — Regional Pricing for IAP and Subscriptions
+# App Store PPP pricing by country — free CLI that bulk-updates IAP & subscription prices in 175+ countries by purchasing power with AI agent skills support
 
-![PyPI](https://img.shields.io/pypi/v/appstore-ppp-prices)
+[![PyPI](https://img.shields.io/pypi/v/appstore-ppp-prices)](https://pypi.org/project/appstore-ppp-prices/)
 ![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
-![Tests](https://img.shields.io/badge/tests-164%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-173%20passing-brightgreen)
 
-**appstore-ppp-prices** is a free, open-source CLI that bulk-updates App Store in-app purchase and subscription prices across **175+ countries** by **purchasing power parity (PPP)**. It reads GDP-per-capita coefficients, optionally tunes them with GPT for your app type, and writes the prices straight through the **App Store Connect API** — one command instead of an afternoon of clicking through territories.
+- **Easy to install** — one line on macOS, Windows or Linux. No Python of your own required.
+- **Agent-friendly** — Claude Code, Codex or Cursor can install it, configure it and run it for you.
+- **Safe by default** — `--dry-run` prints all 174 prices before a single one is applied.
+- **Your API key never leaves your machine** — no account, no upload, no server in the middle.
+- **175+ territories in one command** — in-app purchases and subscriptions alike.
+- **Real Apple price points** — every price is one App Store Connect accepts, in the local currency.
+- **Free and open source (MIT)** — no subscription needed to price your subscriptions.
 
-Your API key never leaves your machine, and every run can be previewed before anything changes.
+**appstore-ppp-prices** is a free, open-source CLI that brings **PPP pricing** — purchasing power parity — to the **App Store**. It bulk-updates in-app purchase and subscription prices across **175+ countries**, reading GDP-per-capita coefficients, optionally tuning them with GPT for your app type, and writing the prices straight through the **App Store Connect API**. One command instead of an afternoon of clicking through territories.
 
 > **Other languages:** [Русский](README.ru.md) · [Português](README.pt.md) · [Español](README.es.md) · [中文](README.zh.md)
 
+## Install It With Your AI Agent
+
+Paste this into **Claude Code**, **Codex**, **Cursor** or any other coding agent. It installs the tool and walks you through the one-time App Store Connect setup:
+
+```text
+Install the appstore-ppp-prices CLI for me: https://github.com/duceum/appstore-ppp-pricing-agent-skill
+Run `uv tool install appstore-ppp-prices` (install uv first if it is missing), then help me create the
+.env with my App Store Connect API key in the config directory the tool expects, install the agent skill
+from the repo's agent-skills/ folder, and finish by verifying with `ppp-pricing --version`.
 ```
+
+Rather do it by hand? It is two lines — [macOS](#macos) · [Windows](#windows) · [Linux](#linux) have the details:
+
+```bash
 uv tool install appstore-ppp-prices
 ppp-pricing --app-id 123456789 --iap com.app.weekly --dry-run
 ```
@@ -28,24 +47,30 @@ PPP pricing sets each territory relative to what people there can actually affor
 
 ## What Your Prices Become
 
-Real output from `--dry-run` for a **$5.99 weekly subscription**, using the default coefficients:
+Real `--dry-run` output for a **$5.99 weekly subscription** with the default coefficients. Every price is an actual Apple price point in the country's own currency, next to what App Store Connect charges there by default:
 
-| Country | Category | Coefficient | PPP price | Apple's equalized price |
-|---|---|---|---|---|
-| United States | base | 1.00 | $5.99 | $5.99 |
-| Switzerland | premium | 1.12 | $6.69 | ≈ $5.99 |
-| Germany | high income | 0.92 | $5.49 | ≈ $5.99 |
-| Japan | upper middle | 0.75 | $4.49 | ≈ $5.99 |
-| Poland | upper middle | 0.75 | $4.49 | ≈ $5.99 |
-| Brazil | lower middle | 0.55 | $3.29 | ≈ $5.99 |
-| Mexico | lower middle | 0.55 | $3.29 | ≈ $5.99 |
-| Turkey | lower middle | 0.55 | $3.29 | ≈ $5.99 |
-| India | emerging | 0.38 | $2.29 | ≈ $5.99 |
-| Indonesia | emerging | 0.38 | $2.29 | ≈ $5.99 |
-| Nigeria | emerging | 0.38 | $2.29 | ≈ $5.99 |
-| Egypt | emerging | 0.38 | $2.29 | ≈ $5.99 |
+| Country | Category | Coefficient | Apple's default | PPP price | Change |
+|---|---|---|---|---|---|
+| United States | base | 1.00 | $5.99 | **$5.99** | — |
+| Switzerland | premium | 1.10 | CHF 5.00 | **CHF 5.50** | +10% |
+| Norway | premium | 1.10 | NOK 79 | **NOK 87** | +10% |
+| Germany | high income | 0.90 | €6.99 | **€6.29** | −10% |
+| United Kingdom | high income | 0.90 | £5.99 | **£5.39** | −10% |
+| Japan | upper middle | 0.75 | ¥1,000 | **¥750** | −25% |
+| Poland | upper middle | 0.75 | 29.99 zł | **22.49 zł** | −25% |
+| Brazil | lower middle | 0.50 | R$39.90 | **R$19.90** | −50% |
+| Mexico | lower middle | 0.50 | MX$129 | **MX$64** | −50% |
+| Turkey | lower middle | 0.50 | ₺299.99 | **₺149.99** | −50% |
+| India | emerging | 0.40 | ₹599 | **₹239** | −60% |
+| Indonesia | emerging | 0.40 | Rp99,000 | **Rp39,500** | −60% |
+| Nigeria | emerging | 0.40 | ₦9,900 | **₦3,950** | −60% |
+| Egypt | emerging | 0.40 | E£299.99 | **E£119.99** | −60% |
 
-Every target is snapped to the nearest real Apple price tier, so the prices are ones App Store Connect will actually accept.
+Every country moved by exactly the coefficient it was given, in its own money — India pays ₹239 instead of ₹599, and Switzerland pays CHF 5.50 instead of CHF 5.00, because a Swiss customer can afford more than a globally equalized price assumes.
+
+**Why the prices are computed in local currency.** The tool asks Apple what it charges in each territory for your US price, multiplies *that* by the country's coefficient, and picks a point from the territory's own price grid — which is fine-grained: Swiss francs move in 0.10 steps, Norwegian kroner in whole kroner. Where a target falls between two points it rounds away from the base price: up for a country priced above the US, down for one priced below.
+
+Doing the same arithmetic in dollars — pick a USD price point and let Apple's equalization translate it — quietly distorts every row, because equalization only reaches a coarse subset of each grid. Every USD price from $6.39 to $6.99 becomes CHF 6.00, and both $5.99 and $6.59 become NOK 79. A +10% coefficient would arrive as +20% in Switzerland and as nothing at all in Norway.
 
 ## What It Does
 
@@ -53,7 +78,7 @@ Every target is snapped to the nearest real Apple price tier, so the prices are 
 2. Fetches your current in-app purchases, subscriptions and their US prices
 3. Calculates a target price per country from GDP per capita
 4. *(Optional)* Asks GPT to tune the coefficients for your app type — a puzzle game and an AI tool have very different price elasticity
-5. Resolves each target to the nearest Apple price tier
+5. Converts each target into a real local price point: Apple's own price for that territory, scaled by the coefficient
 6. Applies everything in bulk, or prints a table and changes nothing with `--dry-run`
 
 ## Built for AI Agents
@@ -72,7 +97,7 @@ In practice you can hand the whole task over:
 
 which is just these two commands:
 
-```
+```bash
 ppp-pricing --app-id 123456789 --iap com.app.weekly --dry-run
 ppp-pricing --app-id 123456789 --iap com.app.weekly --exclude RUS,BLR
 ```
@@ -115,28 +140,23 @@ This tool runs locally. The `.p8` file stays in your config directory, the JWT i
 - (Optional) **OpenAI** API key for AI analysis
 - **Python 3.10** or newer — not needed if you install with `uv`, which brings its own
 
-## Step-by-Step Setup
+## Installation
 
-### Step 1: Install the Tool
+Pick your operating system. Every path installs the same two commands: `appstore-ppp-prices` and the shorter `ppp-pricing`. The rest of this README uses the short one.
 
-The easiest way is [uv](https://docs.astral.sh/uv/), which needs no Python of your own — it brings its own:
+### macOS
 
-```
+The easiest way is [uv](https://docs.astral.sh/uv/) — it needs no Python of your own, it brings its own:
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
 uv tool install appstore-ppp-prices
+ppp-pricing --version
 ```
 
-No uv yet? Install it first with `curl -LsSf https://astral.sh/uv/install.sh | sh` (macOS, Linux) or `powershell -c "irm https://astral.sh/uv/install.ps1 | iex"` (Windows).
+Prefer Homebrew?
 
-Already have Python 3.10+? Either of these works too:
-
-```
-pipx install appstore-ppp-prices
-pip install appstore-ppp-prices
-```
-
-On a Mac and would rather use Homebrew?
-
-```
+```bash
 brew tap duceum/tap
 brew trust duceum/tap
 brew install duceum/tap/appstore-ppp-prices
@@ -144,19 +164,55 @@ brew install duceum/tap/appstore-ppp-prices
 
 `brew trust` is Homebrew 6 asking whether you accept formula code from a third-party tap. Expect the install to take a few minutes: Homebrew builds Python dependencies from source, and three of them carry native extensions. `uv` uses prebuilt wheels and finishes in seconds.
 
-This installs two names for the same tool: `appstore-ppp-prices` and the shorter `ppp-pricing`. The rest of this README uses the short one.
+Already have Python 3.10+? `pipx install appstore-ppp-prices` or `pip install appstore-ppp-prices` work too.
 
-Verify:
+Your config will live in `~/.config/ppp-pricing/`.
+
+### Windows
+
+In **PowerShell**:
+
+```powershell
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+uv tool install appstore-ppp-prices
 ```
+
+Close the terminal and open a new one so `PATH` is picked up, then check:
+
+```powershell
 ppp-pricing --version
 ```
 
-To try it without installing anything at all: `uvx appstore-ppp-prices --help`
+Already have Python 3.10+? `pip install appstore-ppp-prices` works too.
+
+Your config will live in `C:\Users\<you>\.config\ppp-pricing\` — create it with:
+
+```powershell
+mkdir "$HOME\.config\ppp-pricing"
+```
+
+### Linux
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+uv tool install appstore-ppp-prices
+ppp-pricing --version
+```
+
+`pipx install appstore-ppp-prices` and `pip install --user appstore-ppp-prices` work just as well if you already have Python 3.10+.
+
+Your config will live in `~/.config/ppp-pricing/` (or `$XDG_CONFIG_HOME/ppp-pricing/` if you set that variable).
+
+### Without installing anything
+
+```bash
+uvx appstore-ppp-prices --help
+```
 
 <details>
 <summary>Running from source instead</summary>
 
-```
+```bash
 git clone https://github.com/duceum/appstore-ppp-pricing-agent-skill.git
 cd appstore-ppp-pricing-agent-skill
 pip install -e .
@@ -164,7 +220,9 @@ pip install -e .
 
 </details>
 
-### Step 2: Create an App Store Connect API Key
+## Setup
+
+### Step 1: Create an App Store Connect API Key
 
 1. Go to https://appstoreconnect.apple.com/access/integrations/api
 2. Click **"Generate API Key"**
@@ -175,13 +233,21 @@ pip install -e .
 7. **Copy the Issuer ID** (UUID shown at the top of the page)
 8. **Download the .p8 file** — this is your private key. You can only download it once!
 
-Put the `.p8` file in your config folder:
-```
+Put the `.p8` file in your config folder — macOS and Linux:
+
+```bash
 mkdir -p ~/.config/ppp-pricing
 mv ~/Downloads/AuthKey_*.p8 ~/.config/ppp-pricing/
 ```
 
-### Step 3: (Optional) Get an OpenAI API Key
+Windows (PowerShell):
+
+```powershell
+mkdir "$HOME\.config\ppp-pricing"
+Move-Item "$HOME\Downloads\AuthKey_*.p8" "$HOME\.config\ppp-pricing\"
+```
+
+### Step 2: (Optional) Get an OpenAI API Key
 
 AI analysis adjusts the coefficients for your specific app type. Without it, the tool uses the GDP-based defaults, which are perfectly usable.
 
@@ -195,7 +261,7 @@ The request is a plain OpenAI-format chat completion, so anything that speaks th
 format works — OpenRouter, Groq, Together, Fireworks, DeepSeek, or a local Ollama,
 LM Studio or vLLM. Point it somewhere else with two variables in your `.env`:
 
-```
+```text
 LLM_BASE_URL=https://openrouter.ai/api/v1
 LLM_MODEL=meta-llama/llama-3.3-70b-instruct
 ```
@@ -206,16 +272,19 @@ default 120) helps with slow local models.
 
 </details>
 
-### Step 4: Create the .env Config File
+### Step 3: Create the .env Config File
 
-Create a `.env` file next to the key, at `~/.config/ppp-pricing/.env` (note the dot at the beginning of the file name):
+Create a `.env` file next to the key — note the dot at the beginning of the file name:
 
-```
+```bash
 nano ~/.config/ppp-pricing/.env
 ```
 
+On Windows: `notepad "$HOME\.config\ppp-pricing\.env"`
+
 Fill in your values:
-```
+
+```text
 ASC_KEY_ID=your_key_id
 ASC_ISSUER_ID=your_issuer_id
 ASC_PRIVATE_KEY_PATH=AuthKey_XXXX.p8
@@ -223,14 +292,15 @@ LLM_API_KEY=sk-your-key
 LLM_MODEL=gpt-5.2
 ```
 
-Replace with your actual values. `ASC_PRIVATE_KEY_PATH` is the name of the downloaded `.p8` file — a bare name is resolved next to the `.env`.
+`ASC_PRIVATE_KEY_PATH` is the name of the downloaded `.p8` file — a bare name is resolved next to the `.env`.
 
 Prefer to keep the config elsewhere? Point at it with `--config /path/to/dir`, set `PPP_PRICING_CONFIG`, or just run the tool from a directory that has a `.env` in it.
 
-### Step 5: Verify the Installation
+### Step 4: Verify the Installation
 
 Run the command with your App ID (9-digit number from App Store Connect):
-```
+
+```bash
 ppp-pricing --app-id 123456789
 ```
 
@@ -239,19 +309,22 @@ If everything is configured correctly, you'll see a list of all IAPs and subscri
 ## Usage
 
 ### List all products
-```
+
+```bash
 ppp-pricing --app-id 123456789
 ```
 
 ### Preview prices (without applying)
-```
+
+```bash
 ppp-pricing --app-id 123456789 --iap com.app.weekly --dry-run
 ```
 
 Shows a table of calculated prices per country. Nothing changes in App Store.
 
 ### Apply prices
-```
+
+```bash
 ppp-pricing --app-id 123456789 --iap com.app.weekly
 ```
 
@@ -275,32 +348,38 @@ ppp-pricing --app-id 123456789 --iap com.app.weekly
 ### Examples
 
 Preview prices with AI analysis:
-```
+
+```bash
 ppp-pricing --app-id 123456789 --iap com.app.weekly --dry-run
 ```
 
 Preview prices without AI:
-```
+
+```bash
 ppp-pricing --app-id 123456789 --iap com.app.weekly --dry-run --no-ai
 ```
 
 Apply prices, excluding Russia and Belarus:
-```
+
+```bash
 ppp-pricing --app-id 123456789 --iap com.app.weekly --exclude RUS,BLR
 ```
 
 Override the coefficient for emerging markets:
-```
+
+```bash
 ppp-pricing --app-id 123456789 --iap com.app.weekly --coeff emerging=0.50 --dry-run
 ```
 
 Raise prices for new subscribers only, starting next month:
-```
+
+```bash
 ppp-pricing --app-id 123456789 --iap com.app.weekly --preserved --start-date 2026-09-01
 ```
 
 Clear cached AI analysis results:
-```
+
+```bash
 ppp-pricing --clear-cache
 ```
 
@@ -308,16 +387,16 @@ ppp-pricing --clear-cache
 
 Countries are divided into 6 categories by GDP per capita:
 
-| Category | Example Countries | Typical Coefficient |
+| Category | Example Countries | Default Coefficient |
 |----------|-------------------|---------------------|
-| Premium | Luxembourg, Switzerland, Norway | 1.05 - 1.15 |
+| Premium | Luxembourg, Switzerland, Norway | 1.10 |
 | USA | United States (base price) | 1.00 |
-| High Income | Germany, UK, Canada, Australia | 0.80 - 0.95 |
-| Upper Middle | Poland, Spain, Italy, Japan | 0.60 - 0.75 |
-| Lower Middle | Brazil, China, Mexico | 0.45 - 0.60 |
-| Emerging | India, Vietnam, Ukraine | 0.35 - 0.50 |
+| High Income | Germany, UK, Canada, Australia | 0.90 |
+| Upper Middle | Poland, Spain, Italy, Japan | 0.75 |
+| Lower Middle | Brazil, China, Mexico | 0.50 |
+| Emerging | India, Vietnam, Ukraine | 0.40 |
 
-The full list of 175+ countries with their GDP per capita and default coefficients lives in [`appstore_ppp_prices/countries.csv`](appstore_ppp_prices/countries.csv) — edit it if you disagree with a placement.
+AI analysis moves these up or down for your app type; `--coeff` overrides them outright. The full list of 175+ countries with their GDP per capita and default coefficients lives in [`appstore_ppp_prices/countries.csv`](appstore_ppp_prices/countries.csv) — edit it if you disagree with a placement.
 
 ## FAQ
 
@@ -335,6 +414,9 @@ Nowhere. It stays in your config directory, the JWT is signed locally, and reque
 
 **How are the coefficients calculated?**
 Each country is placed in one of six income tiers by GDP per capita, and each tier has a default multiplier relative to the US price. With an OpenAI key, GPT adjusts those multipliers for your app's category and price elasticity — a casual game tolerates much deeper discounts than an AI tool with per-request server costs. Minimum coefficient is 0.35, and price floors of $0.99 / $0.49 are enforced with ratios between your products preserved.
+
+**What happens if my target price is between two Apple price points?**
+It rounds in the direction of the change, in the local currency: up when the country is priced above the US, down when it is below. Exact matches are used as-is.
 
 **Can I run it from CI or from an AI agent?**
 Yes. No interactive prompts, deterministic flags, real exit codes. See [Built for AI Agents](#built-for-ai-agents).
@@ -360,10 +442,18 @@ Override a whole category with `--coeff emerging=0.50`, exclude countries with `
 
 ## Running Tests
 
-```
+```bash
 pip install pytest
 pytest
 ```
+
+## Who Made This
+
+I'm **Aleksandr Belousov**, an indie iOS developer. I built this tool to reprice my own apps across 175 territories without spending an afternoon in App Store Connect, and open-sourced it because every indie hits the same wall.
+
+Website: [belousov.one](https://belousov.one) · X/Twitter: [@duceum](https://x.com/duceum) · GitHub: [@duceum](https://github.com/duceum)
+
+Found a bug or disagree with a country's tier? [Open an issue](https://github.com/duceum/appstore-ppp-pricing-agent-skill/issues).
 
 ## License
 

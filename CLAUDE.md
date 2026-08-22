@@ -40,7 +40,7 @@ wheel that resolves to `site-packages`, not the repository. Data files go throug
 - **Business logic is pure**: `pricing.py` has no I/O, no side effects
 - **API client is stateful**: `AppStoreConnectClient` manages JWT token lifecycle with thread-safe locking
 - **Context manager**: `AppStoreConnectClient` supports `with client:` pattern
-- **Concurrent API calls**: `ThreadPoolExecutor` for equalizations and subscription price setting
+- **Concurrent API calls**: `ThreadPoolExecutor` for price-point batches and subscription price setting. Territory price grids are batched 8 territories per request (the endpoint serves 8000 rows a page), so 175 territories cost ~22 calls, not 175
 - **No vendor SDK**: the LLM call is a plain httpx POST in `llm.py`, so any OpenAI-compatible endpoint works (OpenRouter, Groq, Ollama, vLLM) and nothing in the dependency tree needs compiling. Retries live there — 429/5xx/timeouts, three attempts, 1s then 2s backoff; 4xx fails immediately
 - **AI caching**: Results cached in `~/.cache/ppp-pricing/` (`$XDG_CACHE_HOME` honoured) by SHA-256 hash of app name; `--clear-cache` removes all cached results
 - **Config discovery**: `--config` → `$PPP_PRICING_CONFIG` → nearest ancestor of cwd holding a `.env` → `~/.config/ppp-pricing/`. The first two are authoritative: a wrong explicit path fails loudly instead of silently falling back. `load_dotenv` is only ever called with an explicit path — never with `None`, which would make python-dotenv search upwards and override the chosen directory
@@ -50,7 +50,7 @@ wheel that resolves to `site-packages`, not the repository. Data files go throug
 
 ```bash
 pip install -e .
-pytest                    # unit tests (164 tests)
+pytest                    # unit tests (173 tests)
 pytest tests/integration  # integration tests (need real API keys)
 ppp-pricing --app-id ID --iap PRODUCT_ID --dry-run
 ppp-pricing --app-id ID --iap PRODUCT_ID --preserved --start-date 2026-08-01  # subscriptions only
@@ -77,6 +77,8 @@ Optional:
 
 - **GPT model is `gpt-5.2`** — this is correct, do not change it
 - **USA is always excluded** from country list (it's the base price)
+- **Prices are resolved in the local currency, never in dollars**: `resolve_territory_prices` takes Apple's own price for the US price in each territory (one `equalizations` call) and multiplies *that* by the coefficient, then picks from the territory's own grid (`fetch_territory_price_points`). Equalizing a USD price point only reaches a coarse subset of each grid — $6.39-$6.99 all become CHF 6.00 — so a coefficient applied in dollars arrives distorted by up to 20 points
+- **Price-point rounding is directional** (`find_price_point` in `display.py`): an exact point always wins; otherwise a target above the base price rounds **up** to the next point and a target below it rounds **down**, falling back to the nearest point when that direction is empty
 - **Minimum coefficient is 0.35** (enforced in prompt, not in code)
 - **Minimum prices**: $0.99 for premium/usa/high_income, $0.49 for others
 - **Subscription price changes hit existing subscribers by default** (`preserveCurrentPrice=False`); pass `--preserved` to grandfather them. `--start-date` schedules the change (default: today+2). Both flags are subscriptions-only — CLI exits with an error for one-time IAPs.

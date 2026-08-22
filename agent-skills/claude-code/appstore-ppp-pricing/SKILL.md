@@ -93,8 +93,9 @@ if more than one plausibly matches.
 ppp-pricing --app-id 123456789 --iap com.app.weekly --dry-run
 ```
 
-Writes nothing. Prints all 174 target prices with the coefficient used and the Apple
-price tier each one snapped to.
+Writes nothing. Prints all 174 territories with the coefficient used, the price Apple
+charges there by default, the new price — both in that country's own currency — and the
+percentage change between them.
 
 The table is long. Summarise it for the user rather than pasting all of it: the base
 US price, and roughly a dozen representative countries across the tiers — a premium
@@ -154,8 +155,10 @@ minimum coefficient 0.35, and minimum prices of $0.99 for premium/high-income ti
 $0.49 elsewhere. When the cheapest product would fall below its floor, every product in
 the app is scaled up together so the ratios between them stay intact.
 
-Targets are always snapped to a real Apple price tier, so the printed price and the
-final price can differ by a cent or two.
+Prices are computed in each country's own currency: Apple's default price for that
+territory, multiplied by the coefficient, snapped to a real local price point. The
+change column therefore lands within a percent or so of the coefficient, not exactly on
+it. Quote local prices, never dollar conversions of them.
 
 ## When something fails
 

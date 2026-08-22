@@ -94,5 +94,7 @@ The CLI is installed separately on each machine: `uv tool install appstore-ppp-p
 - Floors: minimum coefficient 0.35; minimum price $0.99 for premium/high-income tiers,
   $0.49 elsewhere. If the cheapest product would breach its floor, all products scale up
   together so their ratios hold.
-- Prices snap to real Apple tiers, so the final price can differ by a cent or two.
+- Prices are computed in local currency (Apple's default price for the territory times the
+  coefficient, snapped to a real local price point), so the change lands within a percent
+  or so of the coefficient. Quote local prices, not dollar conversions.
 - Never read, echo or copy the `.p8` key or `.env` contents.

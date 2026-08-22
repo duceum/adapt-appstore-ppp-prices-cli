@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "appstore-ppp-prices"
 version = "1.0.1"
-description = "Regional PPP pricing for App Store in-app purchases and subscriptions: GDP-based price localization across 175+ countries via the App Store Connect API"
+description = "PPP pricing for the App Store: bulk-update in-app purchase and subscription prices across 175+ countries by purchasing power. Free, agent-friendly CLI on top of the App Store Connect API"
 readme = "README.md"
 license = { text = "MIT" }
 authors = [{ name = "Aleksandr Belousov" }]

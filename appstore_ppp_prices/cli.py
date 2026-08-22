@@ -12,7 +12,7 @@ import httpx
 
 from appstore_ppp_prices import __version__
 from appstore_ppp_prices.appstore import AppStoreConnectClient, Product
-from appstore_ppp_prices.display import status, find_closest_price_point, list_products, print_dry_run_table
+from appstore_ppp_prices.display import status, find_price_point, list_products, print_dry_run_table
 from appstore_ppp_prices.llm import configured_api_key
 from appstore_ppp_prices.paths import CONFIG_ENV_VAR, resolve_config_dir, user_config_dir
 from appstore_ppp_prices.pipeline import (
@@ -276,22 +276,22 @@ def main():
                 print("Error: No USD price points available for this product.")
                 sys.exit(1)
 
-            territory_prices = resolve_territory_prices(client, product, target_prices, usd_points)
-            if not territory_prices:
-                print("Error: No territory price points could be resolved.")
-                sys.exit(1)
-
-            us_tier = find_closest_price_point(usd_points, us_price)
+            us_tier = find_price_point(usd_points, us_price, us_price)
             if not us_tier:
                 print("Error: No matching Apple price tier for US price.")
                 sys.exit(1)
-            territory_prices["USA"] = us_tier
             if args.us_price is not None:
                 status(f"  USA price: ${us_tier.customer_price:.2f} (nearest Apple tier)")
 
+            territory_prices, baselines = resolve_territory_prices(client, product, target_prices, us_tier)
+            if not territory_prices:
+                print("Error: No territory price points could be resolved.")
+                sys.exit(1)
+            territory_prices["USA"] = us_tier
+
             if args.dry_run:
-                print_dry_run_table(target_prices, f"{product.name} ({product.product_id})", usd_points,
-                                    us_price_override=territory_prices.get("USA"))
+                print_dry_run_table(target_prices, f"{product.name} ({product.product_id})",
+                                    territory_prices, baselines, client.fetch_currencies())
                 status(f"\n  Dry run complete. {len(target_prices)} prices calculated.")
                 status("  Remove --dry-run to apply.")
                 return

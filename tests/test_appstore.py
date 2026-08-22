@@ -99,38 +99,79 @@ class TestExtractTerritory:
         assert AppStoreConnectClient._extract_territory("") == ""
 
 
-class TestFetchUsdPricePoints:
+def _price_point_id(territory: str) -> str:
+    """Price-point IDs are base64 JSON carrying the territory."""
+    raw = json.dumps({"t": territory, "p": "10000"}).encode("utf-8")
+    return base64.b64encode(raw).decode("utf-8").rstrip("=")
+
+
+class TestFetchTerritoryPricePoints:
     def _make_client(self):
         client = MagicMock()
         client.fetch_usd_price_points = AppStoreConnectClient.fetch_usd_price_points.__get__(client)
+        client.fetch_territory_price_points = AppStoreConnectClient.fetch_territory_price_points.__get__(client)
+        client._parse_price_points = AppStoreConnectClient._parse_price_points.__get__(client)
+        client._extract_territory = AppStoreConnectClient._extract_territory
         return client
+
+    def _product(self):
+        return Product(id="p1", name="test", product_id="com.test", product_type="CONSUMABLE")
 
     def test_skips_invalid_price_values(self):
         """Invalid float values in price points should be skipped, not crash."""
         client = self._make_client()
-        product = Product(id="p1", name="test", product_id="com.test", product_type="CONSUMABLE")
         client._get_all_pages.return_value = ([
-            {"id": "pp1", "attributes": {"customerPrice": "4.99"}},
-            {"id": "pp2", "attributes": {"customerPrice": "not_a_number"}},
-            {"id": "pp3", "attributes": {"customerPrice": "9.99"}},
+            {"id": _price_point_id("USA"), "attributes": {"customerPrice": "4.99"}},
+            {"id": _price_point_id("USA"), "attributes": {"customerPrice": "not_a_number"}},
+            {"id": _price_point_id("USA"), "attributes": {"customerPrice": "9.99"}},
         ], [])
 
-        points = client.fetch_usd_price_points(product)
-        assert len(points) == 2
-        assert points[0].customer_price == 4.99
-        assert points[1].customer_price == 9.99
+        points = client.fetch_usd_price_points(self._product())
+        assert [p.customer_price for p in points] == [4.99, 9.99]
 
     def test_skips_none_price(self):
         """Price points without customerPrice should be skipped."""
         client = self._make_client()
-        product = Product(id="p1", name="test", product_id="com.test", product_type="CONSUMABLE")
         client._get_all_pages.return_value = ([
-            {"id": "pp1", "attributes": {"customerPrice": "4.99"}},
-            {"id": "pp2", "attributes": {}},
+            {"id": _price_point_id("USA"), "attributes": {"customerPrice": "4.99"}},
+            {"id": _price_point_id("USA"), "attributes": {}},
         ], [])
 
-        points = client.fetch_usd_price_points(product)
-        assert len(points) == 1
+        assert len(client.fetch_usd_price_points(self._product())) == 1
+
+    def test_groups_by_territory_and_sorts(self):
+        client = self._make_client()
+        client._get_all_pages.return_value = ([
+            {"id": _price_point_id("CHE"), "attributes": {"customerPrice": "6.00"}},
+            {"id": _price_point_id("CHE"), "attributes": {"customerPrice": "5.50"}},
+            {"id": _price_point_id("NOR"), "attributes": {"customerPrice": "87"}},
+        ], [])
+
+        grids = client.fetch_territory_price_points(self._product(), ["CHE", "NOR"])
+        assert [p.customer_price for p in grids["CHE"]] == [5.50, 6.00]
+        assert [p.customer_price for p in grids["NOR"]] == [87.0]
+
+    def test_batches_territories_into_few_requests(self):
+        """175 territories must not become 175 requests."""
+        client = self._make_client()
+        client._get_all_pages.return_value = ([], [])
+
+        client.fetch_territory_price_points(self._product(), [f"T{i:03d}" for i in range(175)])
+
+        assert client._get_all_pages.call_count == 22
+        first_batch = client._get_all_pages.call_args_list[0].kwargs["params"]["filter[territory]"]
+        assert len(first_batch.split(",")) == 8
+
+    def test_survives_a_failed_batch(self):
+        """One failing batch must not lose the territories fetched by the others."""
+        client = self._make_client()
+        client._get_all_pages.side_effect = [
+            httpx.ReadTimeout("read timed out"),
+            ([{"id": _price_point_id("NOR"), "attributes": {"customerPrice": "87"}}], []),
+        ]
+
+        grids = client.fetch_territory_price_points(self._product(), [f"T{i:02d}" for i in range(16)])
+        assert "NOR" in grids
 
 
 class TestFetchAllEqualizations:

@@ -1,93 +1,93 @@
 from unittest.mock import MagicMock
 
 from appstore_ppp_prices.appstore import PricePoint, Product
-from appstore_ppp_prices.display import find_closest_price_point, list_products, print_dry_run_table
+from appstore_ppp_prices.display import (
+    find_price_point,
+    format_local_price,
+    list_products,
+    print_dry_run_table,
+)
 from appstore_ppp_prices.pricing import TargetPrice
 
 
-class TestFindClosestPricePoint:
-    def test_exact_match(self):
-        points = [
-            PricePoint(id="1", customer_price=0.99, territory_3="USA"),
-            PricePoint(id="2", customer_price=1.99, territory_3="USA"),
-            PricePoint(id="3", customer_price=4.99, territory_3="USA"),
-        ]
-        result = find_closest_price_point(points, 1.99)
-        assert result.id == "2"
+class TestFindPricePoint:
+    def _points(self, *prices: float) -> list[PricePoint]:
+        return [PricePoint(id=str(i), customer_price=price, territory_3="USA")
+                for i, price in enumerate(prices, 1)]
 
-    def test_rounds_to_nearest(self):
-        points = [
-            PricePoint(id="1", customer_price=0.99, territory_3="USA"),
-            PricePoint(id="2", customer_price=1.99, territory_3="USA"),
-            PricePoint(id="3", customer_price=2.99, territory_3="USA"),
-        ]
-        result = find_closest_price_point(points, 2.50)
-        assert result.id == "3"  # 2.99 is closer to 2.50 than 1.99
+    def test_exact_match_wins(self):
+        result = find_price_point(self._points(0.99, 1.99, 4.99), 1.99, base=4.99)
+        assert result.customer_price == 1.99
 
-    def test_rounds_down_when_closer(self):
-        points = [
-            PricePoint(id="1", customer_price=0.99, territory_3="USA"),
-            PricePoint(id="2", customer_price=1.99, territory_3="USA"),
-            PricePoint(id="3", customer_price=2.99, territory_3="USA"),
-        ]
-        result = find_closest_price_point(points, 1.50)
-        assert result.id == "2"  # 1.99 is closer to 1.50 than 0.99
+    def test_rounds_up_above_the_base_price(self):
+        """A premium market must not slip under its target."""
+        result = find_price_point(self._points(4.99, 5.49, 5.99), 5.50, base=4.99)
+        assert result.customer_price == 5.99
+
+    def test_rounds_down_below_the_base_price(self):
+        """A discounted market must not creep over its target."""
+        result = find_price_point(self._points(1.99, 2.99, 4.99), 2.50, base=4.99)
+        assert result.customer_price == 1.99
+
+    def test_falls_back_to_nearest_when_nothing_lies_above(self):
+        result = find_price_point(self._points(0.99, 1.99), 999.99, base=0.99)
+        assert result.customer_price == 1.99
+
+    def test_falls_back_to_nearest_when_nothing_lies_below(self):
+        result = find_price_point(self._points(4.99, 9.99), 0.01, base=9.99)
+        assert result.customer_price == 4.99
+
+    def test_target_equal_to_the_base_price_takes_nearest(self):
+        result = find_price_point(self._points(0.99, 4.99), 3.99, base=3.99)
+        assert result.customer_price == 4.99
 
     def test_empty_list_returns_none(self):
-        result = find_closest_price_point([], 4.99)
-        assert result is None
+        assert find_price_point([], 4.99, base=4.99) is None
 
     def test_single_point(self):
-        points = [PricePoint(id="1", customer_price=9.99, territory_3="USA")]
-        result = find_closest_price_point(points, 0.50)
-        assert result.id == "1"
-
-    def test_target_below_all_points(self):
-        points = [
-            PricePoint(id="1", customer_price=4.99, territory_3="USA"),
-            PricePoint(id="2", customer_price=9.99, territory_3="USA"),
-        ]
-        result = find_closest_price_point(points, 0.01)
-        assert result.id == "1"
-
-    def test_target_above_all_points(self):
-        points = [
-            PricePoint(id="1", customer_price=0.99, territory_3="USA"),
-            PricePoint(id="2", customer_price=1.99, territory_3="USA"),
-        ]
-        result = find_closest_price_point(points, 999.99)
-        assert result.id == "2"
+        result = find_price_point(self._points(9.99), 0.50, base=9.99)
+        assert result.customer_price == 9.99
 
 
 class TestPrintDryRunTable:
-    def _make_results(self, us_price: float = 4.99) -> list[TargetPrice]:
+    def _results(self) -> list[TargetPrice]:
         return [TargetPrice(
-            country_code="DEU", country_name="Germany",
+            country_code="CHE", country_name="Switzerland",
             product_id="id_1", product_name="weekly",
-            us_price=us_price, coefficient=0.85, target_price_usd=round(us_price * 0.85, 2),
+            us_price=5.99, coefficient=1.10, target_price_usd=6.59,
         )]
 
-    def _make_tiers(self) -> list[PricePoint]:
-        return [
-            PricePoint(id="t1", customer_price=0.99, territory_3="USA"),
-            PricePoint(id="t2", customer_price=4.99, territory_3="USA"),
-            PricePoint(id="t3", customer_price=5.99, territory_3="USA"),
-        ]
-
-    def test_without_us_override(self, capsys):
-        print_dry_run_table(self._make_results(), "weekly (com.app.weekly)", self._make_tiers())
+    def test_shows_local_prices_and_the_change(self, capsys):
+        print_dry_run_table(
+            self._results(), "weekly (com.app.weekly)",
+            {"CHE": PricePoint(id="che_550", customer_price=5.50, territory_3="CHE")},
+            {"CHE": PricePoint(id="che_500", customer_price=5.00, territory_3="CHE")},
+            {"CHE": "CHF"},
+        )
         output = capsys.readouterr().out
-        assert "Germany" in output
-        assert "United States (override)" not in output
 
-    def test_with_us_override(self, capsys):
-        us_pp = PricePoint(id="t3", customer_price=5.99, territory_3="USA")
-        print_dry_run_table(self._make_results(5.99), "weekly (com.app.weekly)", self._make_tiers(),
-                            us_price_override=us_pp)
+        assert "Switzerland" in output
+        assert "5.00 CHF" in output
+        assert "5.50 CHF" in output
+        assert "+10.0%" in output
+
+    def test_marks_a_territory_that_did_not_resolve(self, capsys):
+        print_dry_run_table(self._results(), "weekly (com.app.weekly)", {}, {}, {})
         output = capsys.readouterr().out
-        assert "United States (override)" in output
-        assert "5.99" in output
-        assert "Germany" in output
+
+        assert "Switzerland" in output
+        assert "n/a" in output
+
+
+class TestFormatLocalPrice:
+    def test_drops_decimals_on_large_round_amounts(self):
+        assert format_local_price(39000.0, "IDR") == "39,000 IDR"
+
+    def test_keeps_decimals_on_small_amounts(self):
+        assert format_local_price(5.5, "CHF") == "5.50 CHF"
+
+    def test_survives_a_missing_currency(self):
+        assert format_local_price(5.5, "") == "5.50"
 
 
 class TestListProducts:

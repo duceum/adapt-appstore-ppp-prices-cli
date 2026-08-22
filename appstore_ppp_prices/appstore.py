@@ -6,6 +6,7 @@ import logging
 import os
 import threading
 import time
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from datetime import date, timedelta
 from pathlib import Path
@@ -18,6 +19,8 @@ log = logging.getLogger(__name__)
 BASE_URL = "https://api.appstoreconnect.apple.com"
 TOKEN_LIFETIME = 1200  # 20 minutes
 REQUEST_TIMEOUT = int(os.getenv("ASC_REQUEST_TIMEOUT", "30"))
+PRICE_POINT_PAGE_SIZE = 8000    # the price-point endpoints accept this much per page
+TERRITORIES_PER_REQUEST = 8     # a territory holds ~800 points, so eight still fit one page
 
 
 @dataclass
@@ -178,20 +181,67 @@ class AppStoreConnectClient:
 
     def fetch_usd_price_points(self, product: Product) -> list[PricePoint]:
         """Fetch all USD (USA territory) price points for a product."""
+        return self.fetch_territory_price_points(product, ["USA"]).get("USA", [])
+
+    def fetch_territory_price_points(
+        self, product: Product, territories: list[str],
+    ) -> dict[str, list[PricePoint]]:
+        """Every local price point of each territory, keyed by 3-letter code.
+
+        Apple prices each territory on its own grid — CHF moves in 0.10 steps,
+        NOK in whole kroner — and that grid is far finer than what equalizing a
+        USD price point yields. Territories are batched because the endpoint
+        serves 8000 rows per page, which keeps 175 of them to ~20 requests.
+        """
         path = (f"/v1/subscriptions/{product.id}/pricePoints" if product.is_subscription
                 else f"/v2/inAppPurchases/{product.id}/pricePoints")
-        data, _ = self._get_all_pages(path, params={"filter[territory]": "USA", "limit": "200"})
+        unique = list(dict.fromkeys(territories))
+        batches = [unique[i:i + TERRITORIES_PER_REQUEST]
+                   for i in range(0, len(unique), TERRITORIES_PER_REQUEST)]
 
+        def fetch(batch: list[str]) -> list[dict]:
+            try:
+                data, _ = self._get_all_pages(path, params={
+                    "filter[territory]": ",".join(batch),
+                    "limit": str(PRICE_POINT_PAGE_SIZE),
+                })
+                return data
+            except (httpx.HTTPStatusError, httpx.TimeoutException, httpx.ConnectError, OSError) as e:
+                log.warning("Failed to fetch price points for %s: %s", ",".join(batch), e)
+                return []
+
+        grids: dict[str, list[PricePoint]] = {}
+        with ThreadPoolExecutor(max_workers=5) as pool:
+            for rows in pool.map(fetch, batches):
+                for point in self._parse_price_points(rows):
+                    grids.setdefault(point.territory_3, []).append(point)
+
+        for points in grids.values():
+            points.sort(key=lambda p: p.customer_price)
+        return grids
+
+    def _parse_price_points(self, rows: list[dict]) -> list[PricePoint]:
+        """Turn raw price-point rows into PricePoints, skipping unusable ones."""
         points: list[PricePoint] = []
-        for pp in data:
+        for pp in rows:
             price = pp.get("attributes", {}).get("customerPrice")
-            if price is None:
+            territory = self._extract_territory(pp["id"])
+            if price is None or not territory:
                 continue
             try:
-                points.append(PricePoint(id=pp["id"], customer_price=float(price), territory_3="USA"))
+                points.append(PricePoint(id=pp["id"], customer_price=float(price), territory_3=territory))
             except (ValueError, TypeError):
                 log.warning("Skipping price point %s: invalid price %r", pp.get("id"), price)
-        return sorted(points, key=lambda p: p.customer_price)
+        return points
+
+    def fetch_currencies(self) -> dict[str, str]:
+        """Territory code -> ISO currency code, for displaying local prices."""
+        try:
+            data, _ = self._get_all_pages("/v1/territories", params={"limit": "200"})
+        except (httpx.HTTPStatusError, httpx.TimeoutException, httpx.ConnectError, OSError) as e:
+            log.warning("Failed to fetch territory currencies: %s", e)
+            return {}
+        return {t["id"]: t.get("attributes", {}).get("currency", "") for t in data}
 
     def fetch_all_equalizations(self, product: Product, usd_price_point_id: str) -> dict[str, PricePoint]:
         """Get equalized price points for ALL territories from a USD base price."""

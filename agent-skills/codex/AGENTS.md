@@ -27,7 +27,8 @@ ppp-pricing --app-id 123456789 --iap com.app.weekly --dry-run
 ppp-pricing --app-id 123456789 --iap com.app.weekly
 ```
 
-The dry-run table is 174 rows. Summarise it: the US base price and a dozen
+The dry-run table is 174 rows, in each country's own currency: Apple's default price,
+the new price, and the change between them. Summarise it: the US base price and a dozen
 representative countries across the tiers, and state plainly how far the price falls in
 the largest emerging markets — that is the decision actually being made.
 
@@ -94,8 +95,9 @@ The CLI is installed separately on each machine: `uv tool install appstore-ppp-p
 - Minimum coefficient 0.35. Minimum price $0.99 for premium and high-income tiers,
   $0.49 elsewhere. If the cheapest product would breach its floor, every product scales
   up together so the ratios between them are preserved.
-- Targets snap to real Apple price tiers, so the final price can differ by a cent or two
-  from the calculated target.
+- Prices are computed in local currency — Apple's default price for the territory times
+  the coefficient, snapped to a real local price point — so the change lands within a
+  percent or so of the coefficient. Quote local prices, not dollar conversions.
 - Partial failures on apply are per-territory and non-fatal. Report which territories
   failed rather than calling the run a success.
 - Never read, echo or copy the `.p8` key or the contents of `.env`.
